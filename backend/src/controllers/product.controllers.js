@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import fs from "fs";
-import path from "path";
+import { saveImage, deleteImage } from "../helpers/storage.helper.js";
 import {
   dbDeleteProduct,
   dbGetProductbyId,
@@ -102,9 +101,8 @@ const pacthProducts = async (req, res) => {
       }
       delete updateData.existingImages;
 
-      const newImages = (req.files || []).map(
-        (file) => `/uploads/${file.filename}`, // MANTENLO ASÍ DE CORTO
-      );
+      // Local: "/uploads/archivo.jpg" | Cloudinary: URL completa
+      const newImages = await Promise.all((req.files || []).map(saveImage));
 
       const finalImages = [...keptImages, ...newImages];
 
@@ -114,22 +112,15 @@ const pacthProducts = async (req, res) => {
         });
       }
 
-      // Borra del disco las imágenes que el producto tenía y que ya
-      // no están en la lista final (las que el usuario eliminó en el form)
+      // Borra (disco o Cloudinary) las imágenes que el producto tenía y que
+      // ya no están en la lista final (las que el usuario eliminó en el form)
       const currentProduct = await dbGetProductbyId(productId);
       if (currentProduct) {
         const removedImages = currentProduct.productImages.filter(
           (url) => !finalImages.includes(url),
         );
 
-        removedImages.forEach((url) => {
-          const filename = url.split("/uploads/")[1];
-          if (filename) {
-            fs.unlink(path.join("uploads", filename), (err) => {
-              if (err) console.error("No se pudo borrar", filename, err);
-            });
-          }
-        });
+        removedImages.forEach((url) => deleteImage(url));
       }
 
       updateData.productImages = finalImages;
@@ -252,9 +243,8 @@ const createProduct = async (req, res) => {
     inputData.createdBy = req.payload._id;
 
     if (req.files && req.files.length > 0) {
-      inputData.productImages = req.files.map(
-        (file) => `/uploads/${file.filename}`, // MANTENLO ASÍ DE CORTO
-      );
+      // Local: "/uploads/archivo.jpg" | Cloudinary: URL completa
+      inputData.productImages = await Promise.all(req.files.map(saveImage));
     }
 
     // obtiene los datos enviados en la peticion
@@ -309,6 +299,9 @@ const deleteProducts = async (req, res) => {
         msg: "El producto que intenta eliminar no existe",
       });
     }
+
+    // Borra también sus imágenes (disco o Cloudinary)
+    (deletedProduct.productImages || []).forEach((url) => deleteImage(url));
 
     res.json({
       msg: "Producto eliminado",

@@ -2,8 +2,7 @@
 
 import express from "express";
 import mongoose from "mongoose";
-import fs from "fs";
-import path from "path";
+import { saveImage, deleteImage } from "../helpers/storage.helper.js";
 
 import {
   dbinsertService,
@@ -20,12 +19,10 @@ const createServices = async (req, res) => {
     inputData.registeringUserId = req.payload._id;
 
     if (req.file) {
-      // Ruta relativa (igual que productos): el front arma la URL completa
-      // con el pipe `imageUrl`, contra el servidor donde esté corriendo en
-      // ese momento. Si acá se guarda la URL absoluta (protocolo + host),
-      // queda "quemado" el host de cuando se creó el servicio, y se rompe
-      // en cuanto el proyecto se mueve a otro servidor (ej: AWS).
-      inputData.serviceImage = `/uploads/${req.file.filename}`;
+      // Local: ruta relativa (/uploads/...), el front arma la URL completa
+      // con el pipe `imageUrl`. Cloudinary: URL completa de la imagen.
+      // Ver helpers/storage.helper.js
+      inputData.serviceImage = await saveImage(req.file);
     }
 
     const createdService = await dbinsertService(inputData);
@@ -69,21 +66,16 @@ const patchServices = async (req, res) => {
 
     if (req.file || wantsRemoveExisting) {
       // Un servicio solo tiene 1 imagen: si va a cambiar o a borrarse,
-      // hay que borrar del disco la que tenía para no dejar archivos
-      // huérfanos acumulándose en /uploads.
+      // hay que borrar la que tenía (disco o Cloudinary) para no dejar
+      // archivos huérfanos acumulándose.
       const currentService = await dbGetServicesByid(id);
 
       if (currentService?.serviceImage) {
-        const filename = currentService.serviceImage.split("/uploads/")[1];
-        if (filename) {
-          fs.unlink(path.join("uploads", filename), (err) => {
-            if (err) console.error("No se pudo borrar", filename, err);
-          });
-        }
+        deleteImage(currentService.serviceImage);
       }
 
       if (req.file) {
-        inputData.serviceImage = `/uploads/${req.file.filename}`;
+        inputData.serviceImage = await saveImage(req.file);
       } else if (wantsRemoveExisting) {
         inputData.serviceImage = "";
       }
@@ -156,15 +148,10 @@ const deleteServices = async (req, res) => {
       }
     }
 
-    // Borra del disco la imagen del servicio eliminado, igual que se hace
-    // al reemplazarla/quitarla en patchServices.
+    // Borra la imagen del servicio eliminado (disco o Cloudinary), igual
+    // que se hace al reemplazarla/quitarla en patchServices.
     if (data.serviceImage) {
-      const filename = data.serviceImage.split("/uploads/")[1];
-      if (filename) {
-        fs.unlink(path.join("uploads", filename), (err) => {
-          if (err) console.error("No se pudo borrar", filename, err);
-        });
-      }
+      deleteImage(data.serviceImage);
     }
 
     res.status(200).json({

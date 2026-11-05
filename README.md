@@ -44,6 +44,7 @@ Sistema web full-stack para la gestión de un taller de motos: tienda de repuest
 - Autorización por roles en el backend (middlewares) y en el frontend (guards)
 - Middlewares de propiedad de recursos: un cliente solo puede ver o editar lo suyo
 - Índices TTL en MongoDB para depurar órdenes y registros antiguos de forma automática
+- Almacenamiento de imágenes intercambiable: disco local en desarrollo y Cloudinary en producción
 
 ## 🛠️ Stack
 
@@ -105,6 +106,7 @@ Variables de entorno (`backend/.env`):
 | `JWT_SEED` | Clave para firmar los tokens |
 | `DB_URI` | Cadena de conexión a MongoDB |
 | `EMAIL_USER` / `EMAIL_PASS` | Cuenta de Gmail y contraseña de aplicación para enviar códigos de recuperación |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | Opcionales. Si están definidas, las imágenes se suben a Cloudinary; si no, se guardan en `backend/uploads/` |
 
 ### 3. Frontend
 
