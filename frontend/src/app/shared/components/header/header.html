@@ -1,0 +1,43 @@
+<header class="app-header">
+  <a class="header-logo" routerLink="/" (click)="closeMenu()">
+    <img src="assets/images/logo.png" alt="AndubaMotos Logo" class="logo-img" />
+    <span class="logo-text">Anduba<span>Motos</span></span>
+  </a>
+
+  <nav class="desktop-only">
+    <ul class="header-nav">
+      <li><a routerLink="/" (click)="closeMenu()">Inicio</a></li>
+      <li><a routerLink="/brochure" routerLinkActive="active" (click)="closeMenu()">Productos</a></li>
+      <li><a routerLink="/services" routerLinkActive="active" (click)="closeMenu()">Servicios</a></li>
+      <li><a routerLink="/about-us" routerLinkActive="active" (click)="closeMenu()">Nosotros</a></li>
+      <li><a routerLink="/contact" routerLinkActive="active" (click)="closeMenu()">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <div class="header-actions">
+    @if (httpAuth.user$ | async; as user) {
+      @if (user.rol == 'admin' || user.rol == 'owner') {
+        <button routerLink="/dashboard" class="btn-admin">Admin</button>
+      }
+    }
+
+    <app-account-menu class="desktop-only"></app-account-menu>
+
+    <button class="icon-glass" aria-label="Carrito" (click)="cartService.toggle()">
+      <fa-icon [icon]="faCartShopping"></fa-icon>
+      @if (cartService.cart$ | async; as cart) {
+        @if (cart.products.length > 0) {
+          <span class="icon-glass__badge">{{ cart.products.length }}</span>
+        }
+      }
+    </button>
+
+    <button class="icon-glass hamburger" aria-label="Menú" (click)="$event.stopPropagation(); toggleMenu()">
+      <fa-icon [icon]="menuOpen ? faXmark : faBars"></fa-icon>
+    </button>
+  </div>
+</header>
+
+<app-mobile-menu [open]="menuOpen" (closeMenu)="closeMenu()"></app-mobile-menu>
+
+<div class="header-spacer" aria-hidden="true"></div>

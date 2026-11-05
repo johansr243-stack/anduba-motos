@@ -1,0 +1,58 @@
+<div class="users-container">
+  <div class="users-wrapper">
+    <div class="header">
+      <h1>MOTOCICLETAS</h1>
+      <p>Gestionar y administrar motocicletas registradas</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" placeholder="Buscar por placa, número de serie, marca..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()">
+      </div>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <option value="" disabled>Filtrar por estado</option>
+        <option value="">Todos</option>
+        <option value="true">Activa</option>
+        <option value="false">Inactiva</option>
+      </select>
+      <button class="btn-new" routerLink="/dashboard/motorcycles/new" routerLinkActive="active">+ NUEVA MOTOCICLETA</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total Motocicletas</p>
+        <p class="stat-value">{{getAllMotorcycles()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Activas</p>
+        <p class="stat-value active">{{getActiveMotorcycles()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Inactivas</p>
+        <p class="stat-value">{{getInactiveMotorcycles()}}</p>
+      </div>
+    </div>
+
+<div class="users-list-wrapper">
+      <!-- HEADER -->
+      <div class="users-header">
+        <div class="header-cell">PLACA / MOTO</div>
+        <div class="header-cell">CLIENTE</div>
+        <div class="header-cell">COLOR</div>
+        <div class="header-cell">ESTADO</div>
+        <div class="header-cell">REGISTRO</div>
+        <div class="header-cell">ACCIONES</div>
+      </div>
+            @for (motorcycle of filteredMotorcycles$ | async; track $index) {
+
+              <motorcycle-list-card [motorcycle]="motorcycle" (delete)="onDelete($event)">
+              </motorcycle-list-card>
+            }
+    </div>
+
+    <div class="pagination">
+      <span>Mostrando {{(filteredMotorcycles$ | async)?.length}} de {{getAllMotorcycles()}} motocicletas</span>
+     <span></span>
+    </div>
+  </div>
+</div>

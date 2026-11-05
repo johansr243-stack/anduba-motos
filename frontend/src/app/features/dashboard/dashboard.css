@@ -1,0 +1,121 @@
+:host {
+  display: block;
+}
+
+.dashboard-container {
+  position: relative;
+  min-height: 100vh;
+  padding: 2.5rem 2rem;
+  background: var(--carbon);
+  color: var(--ink);
+  isolation: isolate;
+}
+
+.dashboard-container::before {
+  content: '';
+  position: fixed;
+  z-index: 0;
+  top: -12%;
+  right: 4%;
+  width: 700px;
+  height: 700px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--red-soft) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.dashboard-wrapper {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-welcome {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+  color: var(--dim);
+  font-size: 13.5px;
+}
+.dashboard-welcome strong {
+  color: var(--ink);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.dashboard-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  background: var(--glass-fill);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  padding: 20px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.18s ease, background 0.18s ease, transform 0.18s ease;
+}
+.dashboard-card:hover {
+  border-color: var(--red-border);
+  background: rgba(255, 255, 255, 0.035);
+  transform: translateY(-2px);
+}
+
+.dashboard-card-icon {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--red-soft);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+
+.dashboard-card-body {
+  flex: 1;
+}
+.dashboard-card-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 15.5px;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.dashboard-card-desc {
+  color: var(--dim);
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+.dashboard-card-arrow {
+  color: var(--faint);
+  font-size: 13px;
+  align-self: center;
+  transition: transform 0.18s ease, color 0.18s ease;
+}
+.dashboard-card:hover .dashboard-card-arrow {
+  color: var(--red);
+  transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1.25rem 1rem;
+  }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

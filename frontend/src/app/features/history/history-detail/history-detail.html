@@ -1,0 +1,100 @@
+<div class="users-container">
+    <div class="users-wrapper">
+
+        <app-back-button fallback="/dashboard/history" />
+
+        @if (history$ | async; as history) {
+        <div class="header">
+            <h1>{{ history.user?.username || 'Historial del cliente' }}</h1>
+            <p>Servicios realizados y compras de productos</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total Servicios</p>
+                <p class="stat-value">{{ history.services?.length || 0 }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Gasto en Servicios</p>
+                <p class="stat-value active">
+                    {{ getTotal(history.services, 'finalCost') | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Total Compras</p>
+                <p class="stat-value">{{ history.products?.length || 0 }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Gasto en Productos</p>
+                <p class="stat-value active">
+                    {{ getTotal(history.products, 'total') | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="history-section-title">Servicios realizados</div>
+        <div class="users-list-wrapper">
+            <div class="users-header history-header">
+                <div class="header-cell">MOTO</div>
+                <div class="header-cell">SERVICIO</div>
+                <div class="header-cell">PRECIO</div>
+                <div class="header-cell">FECHA</div>
+                <div class="header-cell">ACCIONES</div>
+            </div>
+
+            @for (record of history.services; track record._id) {
+            <div class="user-card history-row">
+                <div class="card-cell">
+                    {{ record.appointment?.motorcycle?.brand }} — {{ record.appointment?.motorcycle?.licensePlate }}
+                </div>
+                <div class="card-cell">{{ record.appointment?.service?.name || 'N/A' }}</div>
+                <div class="card-cell history-price">
+                    {{ record.finalCost | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </div>
+                <div class="card-cell">{{ record.createdAt | date: 'd MMM y' }}</div>
+                <div class="card-cell actions">
+                    <button class="btn-delete" (click)="onDeleteRecord(record._id)">Eliminar</button>
+                </div>
+            </div>
+            } @empty {
+            <p class="form-hint" style="padding: 20px;">Sin servicios registrados.</p>
+            }
+        </div>
+
+        <div class="history-section-title">Compras de productos</div>
+        <div class="users-list-wrapper">
+            <div class="users-header orders-header">
+                <div class="header-cell">PRODUCTOS</div>
+                <div class="header-cell">TOTAL</div>
+                <div class="header-cell">ESTADO</div>
+                <div class="header-cell">FECHA</div>
+                <div class="header-cell">ACCIONES</div>
+            </div>
+
+            @for (order of history.products; track order._id) {
+            <div class="user-card orders-row">
+                <div class="card-cell">{{ getProductNames(order.products) }}</div>
+                <div class="card-cell history-price">
+                    {{ order.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                </div>
+                <div class="card-cell">
+                    <span class="status">{{ order.status }}</span>
+                </div>
+                <div class="card-cell">{{ order.createdAt | date: 'd MMM y' }}</div>
+                <div class="card-cell actions">
+                    <button class="btn-delete" (click)="onDeleteOrder(order._id)">Eliminar</button>
+                </div>
+            </div>
+            } @empty {
+            <p class="form-hint" style="padding: 20px;">Sin compras registradas.</p>
+            }
+        </div>
+        } @else if (notFound$ | async) {
+        <div class="header">
+            <h1>Sin historial</h1>
+            <p>Este cliente todavía no tiene servicios ni compras registradas.</p>
+        </div>
+        }
+
+    </div>
+</div>

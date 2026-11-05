@@ -1,0 +1,17 @@
+.users-header,
+.user-card {
+  grid-template-columns: 1fr 1fr 1.6fr 0.9fr 0.8fr 1fr;
+}
+
+.records-count {
+  color: var(--dim);
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+.report-empty {
+  color: var(--dim);
+  font-size: 13.5px;
+  padding: 2rem 0;
+  text-align: center;
+}

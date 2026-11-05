@@ -1,0 +1,76 @@
+<div class="users-container">
+  <div class="users-wrapper">
+
+    <div class="header">
+      <h1>Órdenes</h1>
+      <p>Administración de órdenes registradas.</p>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total</p>
+        <p class="stat-value">{{ getAllOrders() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Pendientes</p>
+        <p class="stat-value warn">{{ getPendingOrders() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Canceladas</p>
+        <p class="stat-value suspended">{{ getCanceledOrders() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Pagadas</p>
+        <p class="stat-value active">{{ getPaidOrders() }}</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar por cliente o dirección..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <option value="">Todos los estados</option>
+        <option value="pending">Pendiente</option>
+        <option value="paid">Pagado</option>
+        <option value="shipped">Enviado</option>
+        <option value="delivered">Entregado</option>
+        <option value="canceled">Cancelado</option>
+      </select>
+      <button class="btn-new" routerLink="/dashboard/orders/new">+ NUEVA ORDEN</button>
+    </div>
+
+    <div class="users-list-wrapper">
+      <div class="users-header">
+        <div class="header-cell">CLIENTE</div>
+        <div class="header-cell">TOTAL</div>
+        <div class="header-cell">ESTADO</div>
+        <div class="header-cell">MÉTODO DE PAGO</div>
+        <div class="header-cell">FECHA</div>
+        <div class="header-cell">ACCIONES</div>
+      </div>
+
+      @for (order of filteredOrders$ | async; track order._id) {
+        <div class="user-card">
+          <div class="card-cell" >{{ order.user?.username ?? 'Cliente no disponible' }}</div>
+          <div class="card-cell">{{ order.total | currency: 'COP ' : 'symbol' : '1.0' }}</div>
+          <div class="card-cell" [ngClass]="{'active':order.status == 'paid' || order.status == 'delivered', 'warn':order.status == 'shipped' || order.status == 'pending', 'suspended':order.status == 'canceled'}">{{ statusLabel(order.status) }}</div>
+          <div class="card-cell">{{ order.metodoPago || '—' }}</div>
+          <div class="card-cell">{{ order.createdAt | date: 'shortDate' }}</div>
+          <div class="card-cell actions">
+            <button class="btn-edit" [routerLink]="['/dashboard/orders/edit', order._id]">Editar</button>
+            <button class="btn-delete" (click)="onDelete(order)">Eliminar</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="report-empty">No hay órdenes registradas todavía.</p>
+      }
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,56 @@
+@if (visible()) {
+  <div class="cart-backdrop" [class.closing]="closing()" (click)="close()"></div>
+  <aside class="cart-panel" [class.closing]="closing()" (animationend)="onPanelAnimationEnd()">
+    <div class="cart-panel-header">
+      <p class="cart-panel-title">Tu carrito</p>
+      <button class="icon-glass" aria-label="Cerrar" (click)="close()">
+        <fa-icon [icon]="faXmark"></fa-icon>
+      </button>
+    </div>
+
+    @if (cartService.cart$ | async; as cart) {
+      @if (cart.products.length === 0) {
+        <p class="cart-empty">Tu carrito esta vacio</p>
+      } @else {
+        <div class="cart-items">
+          @for (item of cart.products; track item.product._id) {
+            <div class="cart-item">
+              <img
+                class="cart-item-img"
+                [src]="item.product.productImages?.[0] | imageUrl"
+                [alt]="item.product.name"
+                referrerpolicy="no-referrer"
+              />
+              <div class="cart-item-info">
+                <p class="cart-item-name">{{ item.product.name }}</p>
+                <p class="cart-item-price">
+                  {{ item.unitPrice | currency: 'COP' : 'symbol' : '1.0-0' }}
+                </p>
+              </div>
+              <div class="cart-item-qty">
+                <button class="qty-btn" (click)="decrease(item.product._id, item.quantity)">
+                  <fa-icon [icon]="faMinus"></fa-icon>
+                </button>
+                <span>{{ item.quantity }}</span>
+                <button class="qty-btn" (click)="increase(item.product._id, item.quantity)">
+                  <fa-icon [icon]="faPlus"></fa-icon>
+                </button>
+              </div>
+              <button class="cart-item-remove" (click)="remove(item.product._id)">
+                <fa-icon [icon]="faTrash"></fa-icon>
+              </button>
+            </div>
+          }
+        </div>
+
+        <div class="cart-footer">
+          <div class="cart-total">
+            <span>Total</span>
+            <span>{{ cart.price | currency: 'COP ' : 'symbol' : '1.0-0' }}</span>
+          </div>
+          <button class="cart-checkout-btn" routerLink="/checkout" (click)="close()">Finalizar compra</button>
+        </div>
+      }
+    }
+  </aside>
+}

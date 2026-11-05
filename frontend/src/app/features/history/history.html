@@ -1,0 +1,57 @@
+<div class="users-container">
+    <div class="users-wrapper">
+
+
+        <div class="header">
+            <h1>HISTORIAL</h1>
+            <p>Consulta el historial de servicios y compras por cliente</p>
+        </div>
+
+        @if (filteredClients$ | async; as clients) {
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" placeholder="Buscar por nombre..."
+                    (input)="onSearchChange($any($event.target).value)" />
+            </div>
+            <div class="history-count">{{ clients.length }} clientes</div>
+        </div>
+
+        <div class="history-cards-grid">
+            @for (client of clients; track client.clientId) {
+            <article class="history-card">
+                <div class="history-card__top">
+                    <div class="history-card__avatar">
+                        {{ getInitials(client.username) }}
+                    </div>
+                    <div class="history-card__identity">
+                        <h3 class="history-card__name">{{ client.username }}</h3>
+                        <div class="history-card__badges">
+                            <span class="history-badge">{{ client.serviceCount }} servicio(s)</span>
+                            <span class="history-badge">{{ client.orderCount }} compra(s)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="history-card__total">
+                    <span class="history-card__total-label">Total gastado</span>
+                    <span class="history-card__total-value">
+                        {{ client.totalSpent | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                    </span>
+                </div>
+
+                <button class="history-card__cta" [routerLink]="['/dashboard/history', client.clientId]">
+                    <span>Ver historial</span>
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </article>
+            } @empty {
+            <p class="form-hint">Todavía no hay historial registrado.</p>
+            }
+        </div>
+        }
+
+    </div>
+</div>

@@ -1,0 +1,37 @@
+@if(routeChange){
+  <div class="dashboard-container">
+  <div class="dashboard-wrapper">
+
+    <div class="header">
+      <h1>Panel de administración</h1>
+      <p>Accede a la gestión de cada sección de AndubaMotos.</p>
+    </div>
+
+    @if (httpAuth.user$ | async; as user) {
+      <div class="dashboard-welcome">
+        <span>Conectado como <strong>{{ user.username }}</strong></span>
+        <span class="role-badge">{{ user.rol }}</span>
+      </div>
+    }
+
+    <div class="dashboard-grid">
+      @for (section of sections; track section.route) {
+        <a class="dashboard-card" [routerLink]="section.route" (click)="changeRoute()" >
+          <div class="dashboard-card-icon">
+            <fa-icon [icon]="section.icon" size="lg" />
+          </div>
+          <div class="dashboard-card-body">
+            <p class="dashboard-card-title">{{ section.label }}</p>
+            <p class="dashboard-card-desc">{{ section.description }}</p>
+          </div>
+          <fa-icon class="dashboard-card-arrow" [icon]="faArrowRight" />
+        </a>
+      }
+    </div>
+
+  </div>
+</div>
+}@else{
+
+<router-outlet (activate)="routeChange=false" (deactivate)="routeChange=true"></router-outlet>
+}

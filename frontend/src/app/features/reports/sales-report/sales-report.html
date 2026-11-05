@@ -1,0 +1,127 @@
+<div class="users-container">
+  <div class="users-wrapper">
+
+    <div class="header">
+      <h1>Ventas y ganancias</h1>
+      <p>Resumen de ventas, costos y ganancias de productos y servicios.</p>
+    </div>
+
+    @if (loading$ | async) {
+      <p class="report-status">Cargando resumen...</p>
+    } @else if (errorMsg$ | async; as errorMsg) {
+      <p class="report-status report-status-error">{{ errorMsg }}</p>
+    } @else if (summary$ | async; as summary) {
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <p class="stat-label">Ventas totales</p>
+          <p class="stat-value">{{ summary.totalSales | currency: 'COP ' : 'symbol' : '1.0' }}</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Ganancias puras</p>
+          <p class="stat-value active">{{ summary.totalProfit | currency: 'COP ' : 'symbol' : '1.0' }}</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Artículos vendidos</p>
+          <p class="stat-value">{{ summary.itemsSold }}</p>
+        </div>
+        <div class="stat-card">
+          <p class="stat-label">Órdenes confirmadas</p>
+          <p class="stat-value">{{ summary.ordersCount }}</p>
+        </div>
+      </div>
+
+      @if (summary.pendingOrdersCount > 0) {
+        <div class="report-pending">
+          <span class="stat-value warn">{{ summary.pendingRevenue | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          <span>
+            en {{ summary.pendingOrdersCount }}
+            {{ summary.pendingOrdersCount === 1 ? 'orden pendiente de pago' : 'órdenes pendientes de pago' }}
+            (no se cuentan en las ventas de arriba)
+          </span>
+        </div>
+      }
+
+      <div class="report-breakdown">
+        <div class="report-panel">
+          <p class="report-panel-title">Productos</p>
+          <div class="report-panel-row">
+            <span>Ventas</span>
+            <span>{{ summary.products.sales | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row">
+            <span>Costo</span>
+            <span>{{ summary.products.cost | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row report-panel-row-total">
+            <span>Ganancia</span>
+            <span class="report-positive">{{ summary.products.profit | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row">
+            <span>Artículos vendidos</span>
+            <span>{{ summary.products.itemsSold }}</span>
+          </div>
+        </div>
+
+        <div class="report-panel">
+          <p class="report-panel-title">Servicios</p>
+          <div class="report-panel-row">
+            <span>Facturado</span>
+            <span>{{ summary.services.revenue | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row">
+            <span>Costo de repuestos</span>
+            <span>{{ summary.services.materialsCost | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row report-panel-row-total">
+            <span>Ganancia</span>
+            <span class="report-positive">{{ summary.services.profit | currency: 'COP ' : 'symbol' : '1.0' }}</span>
+          </div>
+          <div class="report-panel-row">
+            <span>Servicios registrados</span>
+            <span>{{ summary.services.count }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header">
+        <h1>Detalle por producto</h1>
+        <p>Costo, ventas y ganancia de cada producto vendido.</p>
+      </div>
+
+      <div class="users-list-wrapper report-table">
+        <div class="users-header">
+          <div class="header-cell">PRODUCTO</div>
+          <div class="header-cell">VENDIDOS</div>
+          <div class="header-cell">COSTO TOTAL</div>
+          <div class="header-cell">VENTAS TOTALES</div>
+          <div class="header-cell">GANANCIA</div>
+          <div class="header-cell">% GANANCIA</div>
+        </div>
+
+        @for (product of summary.productBreakdown; track product.productId) {
+          <div class="user-card">
+            <div class="card-cell">{{ product.name }}</div>
+            <div class="card-cell">{{ product.unitsSold }}</div>
+            <div class="card-cell">{{ product.cost | currency: 'COP ' : 'symbol' : '1.0' }}</div>
+            <div class="card-cell">{{ product.revenue | currency: 'COP ' : 'symbol' : '1.0' }}</div>
+            <div class="card-cell report-positive">
+              {{ product.profit | currency: 'COP ' : 'symbol' : '1.0' }}
+            </div>
+            <div class="card-cell">
+              @if (product.profitPercentage !== null) {
+                {{ product.profitPercentage | number: '1.0-1' }}%
+              } @else {
+                —
+              }
+            </div>
+          </div>
+        } @empty {
+          <p class="report-empty">Todavía no hay ventas registradas.</p>
+        }
+      </div>
+
+    }
+
+  </div>
+</div>

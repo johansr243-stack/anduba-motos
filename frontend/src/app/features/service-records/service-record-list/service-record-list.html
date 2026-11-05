@@ -1,0 +1,66 @@
+<div class="users-container">
+  <div class="users-wrapper">
+    <div class="header">
+      <h1>Registros de servicio</h1>
+      <p>Trabajos realizados en el taller.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total registros</p>
+        <p class="stat-value">{{ getAllRecords() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Ingresos totales</p>
+        <p class="stat-value active">
+          {{ getTotalRevenue() | currency: 'COP ' : 'symbol' : '1.0' }}
+        </p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Promedio por servicio</p>
+        <p class="stat-value">{{ getAverageCost() | currency: 'COP ' : 'symbol' : '1.0' }}</p>
+      </div>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar por descripción, mecánico o cliente..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <span class="records-count">{{ getAllRecords() }} registros</span>
+      <button class="btn-new" routerLink="/dashboard/service-records/new">+ NUEVO REGISTRO</button>
+    </div>
+
+    <div class="users-list-wrapper">
+      <div class="users-header">
+        <div class="header-cell">CLIENTE</div>
+        <div class="header-cell">MECÁNICO</div>
+        <div class="header-cell">DESCRIPCIÓN</div>
+        <div class="header-cell">COSTO FINAL</div>
+        <div class="header-cell">FECHA</div>
+        <div class="header-cell">ACCIONES</div>
+      </div>
+
+      @for (record of filteredRecords$ | async; track record._id) {
+        <div class="user-card">
+          <div class="card-cell">{{ record.appointment?.client?.username ?? '—' }}</div>
+          <div class="card-cell">{{ record.mechanic?.username ?? '—' }}</div>
+          <div class="card-cell">{{ record.description || 'Sin descripción' }}</div>
+          <div class="card-cell">{{ record.finalCost | currency: 'COP ' : 'symbol' : '1.0' }}</div>
+          <div class="card-cell">{{ record.createdAt | date: 'shortDate' }}</div>
+          <div class="card-cell actions">
+            <button class="btn-edit" [routerLink]="['/dashboard/service-records/edit', record._id]">
+              Editar
+            </button>
+            <button class="btn-delete" (click)="onDelete(record)">Eliminar</button>
+          </div>
+        </div>
+      } @empty {
+        <p class="report-empty">No hay registros de servicio creados todavía.</p>
+      }
+    </div>
+  </div>
+</div>

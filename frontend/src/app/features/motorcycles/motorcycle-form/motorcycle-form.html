@@ -1,0 +1,144 @@
+<div class="form-page-bg">
+  <app-back-button fallback="/motorcycles" />
+  <form class="form-page" [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <div class="form-header">
+      <h1>{{ formTitle }}</h1>
+      <p>Completa los datos de la motocicleta</p>
+    </div>
+
+    <div class="form-section" [class.is-elevated]="showBrandResults">
+      <div class="form-section-title">Información de la motocicleta</div>
+      <div class="form-section-body">
+        <div>
+          <label for="licensePlate">Placa</label>
+          <input
+            type="text"
+            id="licensePlate"
+            formControlName="licensePlate"
+            placeholder="ABC123"
+          />
+          @if (licensePlate?.invalid && (licensePlate?.dirty || licensePlate?.touched)) {
+            @if (licensePlate?.errors?.['required']) {
+              <small class="form-error">La placa es obligatoria</small>
+            }
+            @if (licensePlate?.errors?.['maxlength']) {
+              <small class="form-error">La placa no puede tener más de 6 caracteres</small>
+            }
+            @if (licensePlate?.errors?.['invalidPlate']) {
+              <small class="form-error">La placa no es válida. Formato: 3 letras y 3 números (ABC123). El último número puede ser una letra (ABC12A)</small>
+            }
+          }
+        </div>
+
+        <div class="client-search">
+          <label for="brand">Marca</label>
+          <input
+            type="text"
+            id="brand"
+            [formControl]="brandSearchControl"
+            (focus)="onBrandSearchFocus()"
+            (blur)="onBrandSearchBlur()"
+            placeholder="Busca una marca..."
+            autocomplete="off"
+          />
+          @if (showBrandResults) {
+            <ul class="client-results">
+              @for (marca of brandResults; track marca) {
+                <li (click)="selectBrand(marca)">{{ marca }}</li>
+              }
+            </ul>
+          }
+          @if (brand?.invalid && (brand?.dirty || brand?.touched)) {
+            @if (brand?.errors?.['required']) {
+              <small class="form-error">La marca es obligatoria</small>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="modelName">Modelo</label>
+          <input
+            type="text"
+            id="modelName"
+            formControlName="modelName"
+            placeholder="Modelo de la motocicleta"
+          />
+          @if (modelName?.invalid && (modelName?.dirty || modelName?.touched)) {
+            @if (modelName?.errors?.['required']) {
+              <small class="form-error">El modelo es obligatorio</small>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="color">Color</label>
+          <input type="text" id="color" formControlName="color" placeholder="Color" />
+          @if (color?.invalid && (color?.dirty || color?.touched)) {
+            @if (color?.errors?.['required']) {
+              <small class="form-error">El color es obligatorio</small>
+            }
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="form-section">
+      <div class="form-section-title">Cliente y estado</div>
+      <div class="form-section-body">
+        <div>
+          <label for="clientSearch">Cliente</label>
+          <div class="field-with-action">
+            <div class="client-search">
+              <input
+                type="text"
+                id="clientSearch"
+                [formControl]="clientSearchControl"
+                (focus)="onClientSearchFocus()"
+                (blur)="onClientSearchBlur()"
+                placeholder="Busca por nombre o usuario..."
+                autocomplete="off"
+              />
+              @if (searchingClient) {
+                <small class="client-search-hint">Buscando...</small>
+              }
+              @if (showClientResults) {
+                <ul class="client-results">
+                  @for (user of clientResults; track user._id) {
+                    <li (mousedown)="selectClient(user)">
+                      {{ user.firstName }} {{ user.lastName }} — {{ user.username }}
+                    </li>
+                  } @empty {
+                    <li class="client-results-empty">No se encontraron usuarios</li>
+                  }
+                </ul>
+              }
+              <input type="hidden" formControlName="client" />
+            </div>
+            <app-quick-create-button
+              route="/dashboard/users/new"
+              [icon]="faUsers"
+              label="Registrar cliente nuevo"
+            />
+          </div>
+          @if (client?.invalid && (client?.dirty || client?.touched)) {
+            @if (client?.errors?.['required']) {
+              <small class="form-error">Debe seleccionar el cliente dueño de la moto</small>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="status">Estado</label>
+          <select id="status" formControlName="status">
+            <option [ngValue]="true">Activa</option>
+            <option [ngValue]="false">Inactiva</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="form-submit" type="submit" [disabled]="formData.invalid">
+      {{ formButton }}
+    </button>
+  </form>
+</div>

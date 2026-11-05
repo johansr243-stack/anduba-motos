@@ -1,0 +1,206 @@
+<div class="form-page-bg">
+  <app-back-button fallback="/orders" />
+  <form class="form-page" [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <div class="form-header">
+      <h1>{{ formTitle }}</h1>
+      <p>
+        @if (isEditMode) {
+          Actualiza el estado, la dirección de envío o el método de pago de la orden.
+        } @else {
+          Registra una orden a nombre de un cliente.
+        }
+      </p>
+    </div>
+
+    @if (!isEditMode) {
+      <div class="form-section" [class.is-elevated]="showClientResults">
+        <div class="form-section-title">Cliente</div>
+        <div class="form-section-body">
+          <div class="form-field-full">
+            <label for="clientSearch">Cliente</label>
+            <div class="field-with-action">
+              <div class="client-search">
+                <input
+                  type="text"
+                  id="clientSearch"
+                  [formControl]="clientSearchControl"
+                  (focus)="onClientSearchFocus()"
+                  (blur)="onClientSearchBlur()"
+                  placeholder="Busca por nombre o usuario..."
+                  autocomplete="off"
+                />
+                @if (searchingClient) {
+                  <small class="client-search-hint">Buscando...</small>
+                }
+                @if (showClientResults) {
+                  <ul class="client-results">
+                    @for (u of clientResults; track u._id) {
+                      <li (mousedown)="selectClient(u)">
+                        {{ u.firstName }} {{ u.lastName }} — {{ u.username }}
+                      </li>
+                    } @empty {
+                      <li class="client-results-empty">No se encontraron clientes</li>
+                    }
+                  </ul>
+                }
+                <input type="hidden" formControlName="user" />
+              </div>
+              <app-quick-create-button route="/dashboard/users/new" [icon]="faUsers" label="Registrar cliente nuevo" />
+            </div>
+            @if (user?.invalid && (user?.dirty || user?.touched)) {
+              <small class="form-error">Debe seleccionar el cliente dueño de la orden</small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section product-list" formArrayName="products">
+        <div class="form-section-title">Productos</div>
+        <div class="form-section-body product-list-body">
+          @for (item of products.controls; track $index) {
+            <div class="product-item" [formGroupName]="$index">
+              <div>
+                <label [for]="'product-' + $index">Producto</label>
+                <div class="field-with-action">
+                  <select [id]="'product-' + $index" formControlName="product">
+  <option value="" disabled>Seleccione un producto</option>
+  @for (p of availableProducts($index); track p._id) {
+    <option [value]="p._id">{{ p.name }}</option>
+  }
+</select>
+                  <app-quick-create-button route="/dashboard/products/new" [icon]="faBoxesStacked"
+                    label="Registrar producto nuevo" />
+                </div>
+                @if (item.get('product')?.invalid && (item.get('product')?.dirty || item.get('product')?.touched)) {
+                  @if (item.get('product')?.errors?.['required']) {
+                    <small class="form-error">Selecciona un producto</small>
+                  }
+                }
+              </div>
+
+              <div>
+                <label [for]="'quantity-' + $index">Cantidad</label>
+                <input
+                  [id]="'quantity-' + $index"
+                  type="number"
+                  formControlName="quantity"
+                  min="1"
+                />
+                @if (item.get('quantity')?.invalid && (item.get('quantity')?.dirty || item.get('quantity')?.touched)) {
+                  @if (item.get('quantity')?.errors?.['required']) {
+                    <small class="form-error">La cantidad es obligatoria</small>
+                  }
+                  @if (item.get('quantity')?.errors?.['min']) {
+                    <small class="form-error">La cantidad mínima es 1</small>
+                  }
+                }
+              </div>
+
+              <div class="product-item-price">
+                <label>Precio de venta</label>
+                <p>{{ getUnitPricePreview(item.get('product')?.value) | currency: 'COP ' : 'symbol' : '1.0' }}</p>
+              </div>
+
+              @if (products.length > 1) {
+                <button
+                  type="button"
+                  class="form-remove-btn"
+                  (click)="removeProduct($index)"
+                  aria-label="Quitar producto"
+                >
+                  ✕
+                </button>
+              }
+            </div>
+          }
+
+          <button type="button" class="form-add-btn" (click)="addProduct()">
+            + Agregar producto
+          </button>
+
+          <div class="product-list-total">
+            <span>Total estimado</span>
+            <strong>{{ computeTotalPreview() | currency: 'COP ' : 'symbol' : '1.0' }}</strong>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="form-section">
+        <div class="form-section-title">Cliente</div>
+        <div class="form-section-body">
+          <p class="form-readonly form-field-full">{{ existingUserLabel }}</p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Productos (no editables)</div>
+        <div class="form-section-body">
+          <div class="form-field-full">
+            @for (item of existingProducts; track $index) {
+              <p class="form-readonly">
+                {{ item.product?.name ?? item.product }} — {{ item.quantity }} und. —
+                {{ item.unitPrice | currency: 'COP ' : 'symbol' : '1.0' }}
+              </p>
+            }
+            <p class="form-readonly form-readonly-total">
+              Total: {{ existingTotal | currency: 'COP ' : 'symbol' : '1.0' }}
+            </p>
+            <small class="client-search-hint">
+              Los productos y el total no se pueden editar después de crear la orden.
+            </small>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="form-section">
+      <div class="form-section-title">Estado y entrega</div>
+      <div class="form-section-body">
+        <div>
+          <label for="status">Estado</label>
+          <select id="status" formControlName="status">
+            <option value="pending">Pendiente</option>
+            <option value="paid">Pagado</option>
+            <option value="shipped">Enviado</option>
+            <option value="delivered">Entregado</option>
+            <option value="canceled">Cancelado</option>
+          </select>
+          @if (status?.invalid && (status?.dirty || status?.touched)) {
+            @if (status?.errors?.['required']) {
+              <small class="form-error">Debes seleccionar un estado</small>
+            }
+          }
+        </div>
+
+        <div>
+          <label for="metodoPago">Método de pago</label>
+          <select id="metodoPago" formControlName="metodoPago">
+            <option value="" disabled selected>Seleccione método de pago</option>
+            <option value="cash">Efectivo</option>
+            <option value="card">Tarjeta</option>
+            <option value="transfer">Transferencia</option>
+          </select>
+          @if (metodoPago?.invalid && (metodoPago?.dirty || metodoPago?.touched)) {
+            @if (metodoPago?.errors?.['required']) {
+              <small class="form-error">Debes seleccionar un método de pago</small>
+            }
+          }
+        </div>
+
+        <div class="form-field-full">
+          <label for="direccionEnvio">Dirección de envío</label>
+          <input
+            id="direccionEnvio"
+            type="text"
+            formControlName="direccionEnvio"
+            placeholder="Dirección de envío (opcional)"
+          />
+        </div>
+      </div>
+    </div>
+
+    <button class="form-submit" type="submit" [disabled]="formData.invalid">
+      {{ formButton }}
+    </button>
+  </form>
+</div>

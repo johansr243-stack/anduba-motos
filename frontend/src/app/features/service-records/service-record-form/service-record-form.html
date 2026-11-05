@@ -1,0 +1,270 @@
+<div class="form-page-bg">
+  <app-back-button fallback="/service-records" />
+  <form class="form-page" [formGroup]="formData" (ngSubmit)="onSubmit()">
+    <div class="form-header">
+      <h1>{{ formTitle }}</h1>
+      <p>
+        @if (isEditMode) {
+          Actualiza la descripción, observaciones, costo final o el mecánico responsable.
+        } @else {
+          Registra el trabajo realizado sobre la moto del cliente.
+        }
+      </p>
+    </div>
+
+    @if (!isEditMode) {
+      <div class="form-section">
+        <div class="form-section-title">Cita</div>
+        <div class="form-section-body">
+
+          <!-- Autocomplete: Cliente (primero se busca el cliente) -->
+          <div class="form-field-full">
+            <label for="client">Cliente</label>
+            <div class="field-with-action">
+              <div class="autocomplete-field">
+                <input id="client" type="text" placeholder="Escribe el nombre del cliente..."
+                  [value]="clientSearch$ | async" (input)="onClientInputChange($any($event.target).value)"
+                  (focus)="clientDropdownOpen$.next(true)" (blur)="closeClientDropdown()" autocomplete="off" />
+                @if (clientDropdownOpen$ | async) {
+                  @if ((filteredClients$ | async); as filteredClients) {
+                    @if (filteredClients.length > 0) {
+                    <ul class="autocomplete-list">
+                      @for (user of filteredClients; track user._id) {
+                      <li (mousedown)="selectClient(user)">
+                        {{ user.username }}
+                      </li>
+                      }
+                    </ul>
+                    } @else {
+                    <ul class="autocomplete-list">
+                      <li class="autocomplete-empty">Sin coincidencias</li>
+                    </ul>
+                    }
+                  }
+                }
+              </div>
+              <app-quick-create-button route="/dashboard/users/new" [icon]="faUsers" label="Registrar cliente nuevo" />
+            </div>
+          </div>
+
+          <!-- Citas del cliente seleccionado -->
+          <div class="form-field-full">
+            <label for="appointment">Cita</label>
+            <div class="field-with-action">
+              <select id="appointment" formControlName="appointment" [disabled]="!(selectedClientId$ | async)">
+                <option value="" disabled>
+                  {{ (selectedClientId$ | async) ? 'Seleccione una cita' : 'Primero busca y selecciona un cliente' }}
+                </option>
+                @for (appt of filteredAppointmentsByClient$ | async; track appt._id) {
+                  <option [value]="appt._id">
+                    {{ appt.motorcycle?.licensePlate }} - {{ appt.status }}
+                  </option>
+                } @empty {
+                  @if (selectedClientId$ | async) {
+                    <option value="" disabled>Este cliente no tiene citas registradas</option>
+                  }
+                }
+              </select>
+              <app-quick-create-button route="/appointment" [icon]="faCalendarCheck" label="Registrar cita nueva" />
+            </div>
+            @if (appointment?.invalid && (appointment?.dirty || appointment?.touched)) {
+              <small class="form-error">Debe seleccionar la cita de este servicio</small>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section product-list" formArrayName="usedProducts">
+        <div class="form-section-title">Productos utilizados</div>
+        <div class="form-section-body product-list-body">
+          @for (item of usedProducts.controls; track $index) {
+            <div class="product-item" [formGroupName]="$index">
+              <div>
+                <label [for]="'product-' + $index">Producto</label>
+                <div class="field-with-action">
+                  <select [id]="'product-' + $index" formControlName="product">
+                    <option value="" disabled>Seleccione un producto</option>
+                    @for (p of availableProducts($index); track p._id) {
+                      <option [value]="p._id">{{ p.name }}</option>
+                    }
+                  </select>
+                  <app-quick-create-button route="/dashboard/products/new" [icon]="faBoxesStacked"
+                    label="Registrar producto nuevo" />
+                </div>
+                @if (item.get('product')?.invalid && (item.get('product')?.dirty || item.get('product')?.touched)) {
+                  @if (item.get('product')?.errors?.['required']) {
+                    <small class="form-error">Selecciona un producto</small>
+                  }
+                }
+              </div>
+
+              <div>
+                <label [for]="'quantity-' + $index">Cantidad</label>
+                <input
+                  [id]="'quantity-' + $index"
+                  type="number"
+                  formControlName="quantity"
+                  min="1"
+                />
+                @if (item.get('quantity')?.invalid && (item.get('quantity')?.dirty || item.get('quantity')?.touched)) {
+                  @if (item.get('quantity')?.errors?.['required']) {
+                    <small class="form-error">La cantidad es obligatoria</small>
+                  }
+                  @if (item.get('quantity')?.errors?.['min']) {
+                    <small class="form-error">La cantidad mínima es 1</small>
+                  }
+                }
+              </div>
+
+              @if (usedProducts.length > 1) {
+                <button
+                  type="button"
+                  class="form-remove-btn"
+                  (click)="removeProduct($index)"
+                  aria-label="Quitar producto"
+                >
+                  ✕
+                </button>
+              }
+            </div>
+          }
+
+          <button type="button" class="form-add-btn" (click)="addProduct()">
+            + Agregar producto
+          </button>
+
+          <div class="product-list-total">
+            <span>Costo de productos usados</span>
+            <strong>{{ getProductsCostPreview() | currency: 'COP ' : 'symbol' : '1.0' }}</strong>
+          </div>
+        </div>
+      </div>
+    } @else {
+      <div class="form-section">
+        <div class="form-section-title">Cita</div>
+        <div class="form-section-body">
+          <p class="form-readonly form-field-full">{{ existingAppointmentLabel }}</p>
+        </div>
+      </div>
+
+      <div class="form-section">
+        <div class="form-section-title">Productos utilizados (no editables)</div>
+        <div class="form-section-body">
+          <div class="form-field-full">
+            @for (item of existingProducts; track $index) {
+              <p class="form-readonly">
+                {{ item.product?.name ?? item.product }} — {{ item.quantity }} und.
+              </p>
+            } @empty {
+              <p class="form-readonly">No se usaron productos en este servicio.</p>
+            }
+            <small class="client-search-hint">
+              Los productos usados no se pueden editar después de creado el registro (ya se descontaron del stock).
+            </small>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-section" [class.is-elevated]="showMechanicResults">
+        <div class="form-section-title">Mecánico responsable</div>
+        <div class="form-section-body">
+          <div class="form-field-full">
+            <label for="mechanicSearch">Reasignar mecánico</label>
+            <div class="field-with-action">
+              <div class="client-search">
+                <input
+                  type="text"
+                  id="mechanicSearch"
+                  [formControl]="mechanicSearchControl"
+                  (focus)="onMechanicSearchFocus()"
+                  (blur)="onMechanicSearchBlur()"
+                  placeholder="Busca por nombre o usuario..."
+                  autocomplete="off"
+                />
+                @if (searchingMechanic) {
+                  <small class="client-search-hint">Buscando...</small>
+                }
+                @if (showMechanicResults) {
+                  <ul class="client-results">
+                    @for (u of mechanicResults; track u._id) {
+                      <li (mousedown)="selectMechanic(u)">{{ u.username }}</li>
+                    } @empty {
+                      <li class="client-results-empty">No se encontraron mecánicos</li>
+                    }
+                  </ul>
+                }
+              </div>
+              <app-quick-create-button route="/dashboard/users/new" [icon]="faUsers" label="Registrar mecánico nuevo" />
+            </div>
+            <small class="client-search-hint">Dejalo vacío si no querés cambiar el mecánico.</small>
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="form-section">
+      <div class="form-section-title">Detalle del trabajo</div>
+      <div class="form-section-body">
+        <div class="form-field-full">
+          <label for="description">Descripción del trabajo</label>
+          <input
+            id="description"
+            type="text"
+            formControlName="description"
+            placeholder="Ej: Cambio de aceite y ajuste de cadena"
+          />
+          @if (description?.invalid && (description?.dirty || description?.touched)) {
+            @if (description?.errors?.['required']) {
+              <small class="form-error">La descripción es obligatoria</small>
+            }
+            @if (description?.errors?.['minlength']) {
+              <small class="form-error">La descripción debe tener al menos 3 caracteres</small>
+            }
+          }
+        </div>
+
+        <div class="form-field-full">
+          <label for="observations">Observaciones</label>
+          <input
+            id="observations"
+            type="text"
+            formControlName="observations"
+            placeholder="Notas adicionales para el cliente (opcional)"
+          />
+        </div>
+
+        <div>
+          <label for="finalCost">{{ isEditMode ? 'Costo final' : 'Mano de obra' }}</label>
+          <input
+            id="finalCost"
+            type="number"
+            formControlName="finalCost"
+            placeholder="Costo de la mano de obra"
+            min="0"
+          />
+          @if (finalCost?.invalid && (finalCost?.dirty || finalCost?.touched)) {
+            @if (finalCost?.errors?.['required']) {
+              <small class="form-error">El costo es obligatorio</small>
+            }
+            @if (finalCost?.errors?.['min']) {
+              <small class="form-error">El costo no puede ser negativo</small>
+            }
+          }
+        </div>
+
+        @if (!isEditMode) {
+          <div class="form-field-full">
+            <div class="product-list-total">
+              <span>Total estimado (mano de obra + productos)</span>
+              <strong>{{ getTotalPreview() | currency: 'COP ' : 'symbol' : '1.0' }}</strong>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <button class="form-submit" type="submit" [disabled]="formData.invalid">
+      {{ formButton }}
+    </button>
+  </form>
+</div>

@@ -1,0 +1,10 @@
+<div class="featured-card">
+        <div class="featured-img">
+          <img [src]="product.productImages[0] | imageUrl" [alt]="product.name">
+          <span class="featured-category">{{product.category}}</span>
+        </div>
+        <div class="featured-info">
+          <h3>{{product.name}}</h3>
+          <span class="featured-price">{{product.price + product.price * (product.roi ?? 0) | currency: 'COP ': 'symbol': '1.0'}}</span>
+        </div>
+      </div>

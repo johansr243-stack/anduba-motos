@@ -1,0 +1,145 @@
+<div class="form-page-bg">
+    <div class="contact-layout">
+
+        <div class="contact-info">
+            <span class="services-eyebrow">
+                <span class="services-eyebrow__dot"></span>
+                Contáctanos
+            </span>
+            <h1>Hablemos de tu <span class="accent">moto</span></h1>
+            <p class="contact-info__text">
+                Escríbenos, llámanos o visítanos. Estamos para ayudarte con lo que tu moto necesite.
+            </p>
+
+            <div class="contact-detail">
+                <div class="contact-detail__icon"><fa-icon [icon]="faLocationDot" /></div>
+                <div>
+                    <span class="contact-detail__label">Dirección</span>
+                    <span class="contact-detail__value">Bogotá, Colombia</span>
+                </div>
+            </div>
+
+            <div class="contact-detail">
+                <div class="contact-detail__icon"><fa-icon [icon]="faPhone" /></div>
+                <div>
+                    <span class="contact-detail__label">Teléfono</span>
+                    <span class="contact-detail__value">+57 300 000 0000</span>
+                </div>
+            </div>
+
+            <div class="contact-detail">
+                <div class="contact-detail__icon"><fa-icon [icon]="faClock" /></div>
+                <div>
+                    <span class="contact-detail__label">Horario</span>
+                    <span class="contact-detail__value">Lun - Sáb: 8:00 AM - 6:00 PM</span>
+                </div>
+            </div>
+        </div>
+
+        @if (currentUser$ | async; as user) {
+        <!-- Usuario autenticado -->
+        @if (submitSuccess()) {
+        <div class="form-page contact-form">
+            <div class="form-section success-prompt">
+                <div class="form-section-body">
+                    <div class="success-prompt__icon">
+                        <fa-icon [icon]="faCircleCheck" />
+                    </div>
+                    <h3 class="success-prompt__title">¡Ya agendaste tu cita!</h3>
+                    <p class="success-prompt__text">
+                        Te esperamos en el horario elegido. Puedes revisarla cuando quieras desde tu cuenta.
+                    </p>
+                </div>
+            </div>
+        </div>
+        } @else {
+        <!-- mini-form para agendar la cita -->
+        <form class="form-page contact-form" [formGroup]="appointmentForm" (ngSubmit)="onSubmit()">
+            <div class="form-section">
+                <div class="form-section-title">Agenda tu cita</div>
+                <div class="form-section-body">
+
+                    @if (selectedService(); as svc) {
+                    <div class="form-field-full selected-service">
+                        <span class="selected-service__label">Servicio seleccionado</span>
+                        <div class="selected-service__row">
+                            <strong class="selected-service__name">{{ svc.name }}</strong>
+                            <span class="selected-service__price">
+                                {{ svc.price | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                            </span>
+                        </div>
+                    </div>
+                    } @else {
+                    <div class="form-field-full">
+                        <label for="service">Servicio</label>
+                        <select id="service" formControlName="service">
+                            <option value="" disabled selected>Selecciona un servicio</option>
+                            @for (s of allServices(); track s._id) {
+                            <option [value]="s._id">
+                                {{ s.name }} — {{ s.price | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}
+                            </option>
+                            }
+                        </select>
+                        @if (appointmentForm.get('service')?.invalid && appointmentForm.get('service')?.touched) {
+                        <span class="form-error">Selecciona un servicio</span>
+                        }
+                    </div>
+                    }
+
+                    <div class="form-field-full">
+                        <label for="motorcycle">Selecciona tu moto</label>
+                        <div class="field-with-action">
+                            <select id="motorcycle" formControlName="motorcycle">
+                                <option value="" disabled selected>
+                                    {{ motorcycles().length ? 'Selecciona una moto' : 'No tienes motos registradas' }}
+                                </option>
+                                @for (moto of motorcycles(); track moto._id) {
+                                <option [value]="moto._id">
+                                    {{ moto.brand }} {{ moto.modelName }} — {{ moto.licensePlate }}
+                                </option>
+                                }
+                            </select>
+                            <app-quick-create-button route="/motorcycles/new" [queryParams]="registerMotorcycleQueryParams"
+                                [icon]="faMotorcycle" label="Registrar mi moto" />
+                        </div>
+                        @if (appointmentForm.get('motorcycle')?.invalid && appointmentForm.get('motorcycle')?.touched) {
+                        <span class="form-error">Selecciona la moto para la cita</span>
+                        }
+                    </div>
+
+                    <div class="form-field-full">
+                        <label for="schedule">Fecha y hora</label>
+                        <input type="datetime-local" id="schedule" formControlName="schedule" />
+                        @if (appointmentForm.get('schedule')?.invalid && appointmentForm.get('schedule')?.touched) {
+                        <span class="form-error">Elige la fecha y hora de la cita</span>
+                        }
+                    </div>
+
+                </div>
+            </div>
+
+            <button type="submit" class="form-submit" [disabled]="isSubmitting()">
+                {{ isSubmitting() ? 'Agendando...' : 'Agendar cita' }}
+            </button>
+        </form>
+        }
+        } @else {
+      
+        <div class="form-page contact-form">
+            <div class="form-section">
+                <div class="form-section-title">Agenda tu cita</div>
+                <div class="form-section-body">
+                    <p class="form-field-full guest-prompt__text">
+                        Necesitas una cuenta para agendar una cita con nosotros.
+                    </p>
+                    <div class="form-field-full guest-prompt__actions">
+                        <a routerLink="/login" class="form-submit guest-prompt__login">Inicia sesión</a>
+                        <a routerLink="/register" class="guest-prompt__register">Regístrate</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        }
+
+    </div>
+</div>

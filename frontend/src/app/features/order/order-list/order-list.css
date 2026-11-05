@@ -1,0 +1,11 @@
+.users-header,
+.user-card {
+  grid-template-columns: 1.3fr 0.9fr 0.8fr 1fr 0.8fr 1fr;
+}
+
+.report-empty {
+  color: var(--dim);
+  font-size: 13.5px;
+  padding: 2rem 0;
+  text-align: center;
+}

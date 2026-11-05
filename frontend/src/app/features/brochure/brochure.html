@@ -1,0 +1,64 @@
+<div class="brochure-page">
+  <div class="brochure-header">
+    <div class="brochure-title">
+      <h1>CATÁLOGO <span>/ REPUESTOS</span></h1>
+    </div>
+    <div class="brochure-filters">
+      <button class="filter-btn" [class.active]="categoryFilter === ''" (click)="selectCategory('')">Todos</button>
+      @for (cat of mainCategories$ | async; track cat._id) {
+        <button class="filter-btn" [class.active]="categoryFilter === cat._id" (click)="selectCategory(cat._id)">
+          {{ cat.name }}
+        </button>
+      }
+      @if (extraCategories$ | async; as extraCategories) {
+        @if (extraCategories.length > 0) {
+          <div class="category-more" #moreCategoriesWrapper>
+            <button
+              type="button"
+              class="filter-btn filter-btn--icon"
+              [class.active]="isExtraCategorySelected(extraCategories)"
+              (click)="toggleMoreCategories()"
+              aria-label="Más categorías"
+            >
+              <fa-icon [icon]="faPlus" />
+            </button>
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <div class="products-grid">
+    @for (product of filteredProducts$ | async; track product._id) {
+      <product-brochure-card [product]="product" (open)="onOpenDetail($event)"></product-brochure-card>
+    } @empty {
+      <p class="brochure-empty">No hay productos disponibles en esta categoría por ahora.</p>
+    }
+  </div>
+</div>
+
+@if (showMoreCategories) {
+  @if (extraCategories$ | async; as extraCategories) {
+    <ul
+      class="category-more-list"
+      [style.top.px]="moreCategoriesPos.top"
+      [style.left.px]="moreCategoriesPos.left"
+    >
+      @for (cat of extraCategories; track cat._id) {
+        <li>
+          <button type="button" [class.active]="categoryFilter === cat._id" (click)="selectCategory(cat._id)">
+            {{ cat.name }}
+          </button>
+        </li>
+      }
+    </ul>
+  }
+}
+
+@if (selectedProduct) {
+  <product-brochure-detail
+    [product]="selectedProduct"
+    [originRect]="originRect"
+    (close)="onCloseDetail()"
+  ></product-brochure-detail>
+}

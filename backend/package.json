@@ -1,0 +1,27 @@
+{
+  "name": "backend_andubamotos",
+  "version": "1.0.0",
+  "description": "backend para Ecommerce de partes de motos y parte de administracion",
+  "license": "ISC",
+  "author": "Amed Vanegas <amedvanegas368@gmail.com>",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --env-file=.env --watch src/index.js",
+    "start": "node --env-file=.env src/index.js"
+  },
+  "keywords": [],
+  "contributors": [
+    "Jose Duarte Baez <bmwcasivuela@hotmail.com>",
+    "Johan Daniel Patiño"
+  ],
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.6.2",
+    "multer": "^2.2.0",
+    "nodemailer": "^9.1.1"
+  }
+}

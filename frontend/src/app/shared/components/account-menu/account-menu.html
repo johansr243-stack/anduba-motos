@@ -1,0 +1,26 @@
+<div class="account-menu">
+  <button class="icon-glass" aria-label="Cuenta" [attr.aria-expanded]="isOpen" (click)="toggle()">
+    <fa-icon [icon]="faUser"></fa-icon>
+  </button>
+
+  @if (isOpen) {
+    <div class="account-dropdown">
+      @if (httpAuth.user$ | async; as user) {
+        <div class="account-dropdown-header">
+          <p class="account-greeting">Hola, {{ user.username }}</p>
+        </div>
+        <a routerLink="/my-account" class="account-item" (click)="close()">Mi cuenta</a>
+        <button class="account-item account-item--danger" (click)="onLogout()">
+          Cerrar sesión
+        </button>
+      } @else {
+        <a routerLink="/login" class="account-item account-item--outline" (click)="close()">
+          Iniciar sesión
+        </a>
+        <a routerLink="/register" class="account-item account-item--danger" (click)="close()">
+          Registrarse
+        </a>
+      }
+    </div>
+  }
+</div>

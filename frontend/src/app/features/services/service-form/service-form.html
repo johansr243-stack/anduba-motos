@@ -1,0 +1,77 @@
+<div class="form-page-bg">
+    <app-back-button fallback="/services" />
+    <form class="form-page" [formGroup]="formData" (ngSubmit)="onSubmit()">
+
+        <div class="form-header">
+            <h1>{{ (isEditMode$ | async) ? 'Editar servicio' : 'Nuevo servicio' }}</h1>
+            <p>Completa los datos del servicio</p>
+        </div>
+
+        <div class="form-section">
+            <div class="form-section-title">Datos del servicio</div>
+            <div class="form-section-body">
+
+                <div class="form-field-full">
+                    <label for="name">Nombre</label>
+                    <input id="name" type="text" formControlName="name" placeholder="Cambio de aceite" />
+                    @if (formData.get('name')?.invalid && formData.get('name')?.touched) {
+                    <span class="form-error">El nombre es obligatorio (mínimo 3 caracteres)</span>
+                    }
+                </div>
+
+                <div>
+                    <label for="price">Precio</label>
+                    <input id="price" type="number" formControlName="price" placeholder="80000" />
+                    @if (formData.get('price')?.invalid && formData.get('price')?.touched) {
+                    <span class="form-error">El precio es obligatorio</span>
+                    }
+                </div>
+
+                <div class="image-manager form-field-full">
+                    <label>Imagen del servicio</label>
+                    <div class="image-row">
+                        @if (existingImage$ | async; as existing) {
+                        <div class="image-thumb">
+                            <img [src]="existing | imageUrl" alt="Imagen del servicio" />
+                            <button type="button" (click)="removeExistingImage()">✕</button>
+                        </div>
+                        }
+                        @if (newImagePreview$ | async; as preview) {
+                        <div class="image-thumb image-thumb--new">
+                            <img [src]="preview" alt="Vista previa" />
+                            <button type="button" (click)="removeNewImage()">✕</button>
+                        </div>
+                        }
+                    </div>
+
+                    @if (hasImage$ | async) {
+                    <small>Solo se permite 1 imagen. Elimínala para elegir otra.</small>
+                    } @else {
+                    <div class="file-upload">
+                        <input type="file" id="serviceImageInput" accept="image/jpeg,image/png,image/webp"
+                            (change)="onFileSelected($event)" hidden />
+                        <label for="serviceImageInput" class="file-upload-btn">Seleccionar imagen</label>
+                        <span class="file-upload-hint">0/1 imagen</span>
+                    </div>
+                    }
+                </div>
+
+                <div class="form-field-full">
+                    <label for="description">Descripción</label>
+                    <textarea id="description" formControlName="description"
+                        placeholder="Describe brevemente el servicio"></textarea>
+                    @if (formData.get('description')?.invalid && formData.get('description')?.touched) {
+                    <span class="form-error">La descripción es obligatoria (mínimo 7 caracteres)</span>
+                    }
+                </div>
+
+            </div>
+        </div>
+
+        <button type="submit" class="form-submit" [disabled]="isSubmitting$ | async">
+            {{ (isSubmitting$ | async) ? 'Guardando...' : ((isEditMode$ | async) ? 'Guardar cambios' : 'Crear servicio')
+            }}
+        </button>
+
+    </form>
+</div>

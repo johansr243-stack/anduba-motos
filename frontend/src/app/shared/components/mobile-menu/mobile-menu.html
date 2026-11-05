@@ -1,0 +1,19 @@
+<nav [class.open]="open" class="size">
+  <ul class="header-nav">
+    <li><a routerLink="/" (click)="onLinkClick()">Inicio</a></li>
+    <li><a routerLink="/brochure" routerLinkActive="active" (click)="onLinkClick()">Productos</a></li>
+    <li><a routerLink="/services" routerLinkActive="active" (click)="onLinkClick()">Servicios</a></li>
+    <li><a routerLink="/about-us" routerLinkActive="active" (click)="onLinkClick()">Nosotros</a></li>
+    <li><a routerLink="/contact" routerLinkActive="active" (click)="onLinkClick()">Contacto</a></li>
+  </ul>
+
+  <div class="nav-actions-mobile">
+    @if (httpAuth.user$ | async; as user) {
+      <a routerLink="/my-account" class="btn-outline" (click)="onLinkClick()">Mi cuenta</a>
+      <button (click)="logOut()" class="btn-primary">Cerrar sesión</button>
+    } @else {
+      <a routerLink="/login" class="btn-outline" (click)="onLinkClick()">Iniciar sesión</a>
+      <a routerLink="/register" class="btn-primary" (click)="onLinkClick()">Registrarse</a>
+    }
+  </div>
+</nav>

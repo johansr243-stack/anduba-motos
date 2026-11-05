@@ -1,0 +1,264 @@
+.contact-layout {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 40px;
+    align-items: center;
+    min-height: calc(100vh - 260px);
+}
+
+.contact-info {
+    flex: 0.9;
+    min-width: 0;
+}
+
+.services-eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: fit-content;
+    margin: 32px auto 0;
+    padding: 6px 14px;
+    border: 1px solid var(--glass-border);
+    border-radius: 999px;
+    background: var(--glass-fill);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--red);
+}
+
+.services-eyebrow__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--red);
+    flex-shrink: 0;
+}
+
+.contact-info h1 {
+    margin: 14px 0 16px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 1.15;
+    color: var(--ink);
+}
+
+.contact-info h1 .accent {
+    color: var(--red);
+}
+
+.contact-info__text {
+    margin: 0 0 2rem;
+    color: var(--dim);
+    font-size: 14.5px;
+    line-height: 1.6;
+}
+
+.contact-detail {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-top: 1px solid var(--glass-border);
+}
+
+.contact-detail:first-of-type {
+    border-top: none;
+}
+
+.contact-detail__icon {
+    flex-shrink: 0;
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    color: var(--red);
+}
+
+.contact-detail__label {
+    display: block;
+    font-size: 10.5px;
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.contact-detail__value {
+    display: block;
+    font-size: 14px;
+    color: var(--ink);
+}
+
+.contact-form {
+    flex: 1.1;
+    max-width: none;
+    min-width: 0;
+}
+
+.success-prompt {
+    text-align: center;
+}
+
+.success-prompt .form-section-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.success-prompt__icon {
+    width: 52px;
+    height: 52px;
+    margin: 0 auto 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border-strong);
+    border-radius: 50%;
+    color: var(--green);
+    font-size: 22px;
+}
+
+.success-prompt__title {
+    margin: 0 0 8px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+}
+
+.success-prompt__text {
+    margin: 0;
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.selected-service {
+    padding: 14px 16px;
+    background: var(--glass-fill);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-sm);
+}
+
+.selected-service__label {
+    display: block;
+    font-size: 10.5px;
+    color: var(--red);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+}
+
+.selected-service__row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.selected-service__name {
+    font-size: 15px;
+    color: var(--ink);
+}
+
+.selected-service__price {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--red);
+    white-space: nowrap;
+}
+
+.guest-prompt__text {
+    margin: 0 0 18px;
+    color: var(--dim);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.guest-prompt__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.guest-prompt__login {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+.guest-prompt__register {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border: 1px solid var(--glass-border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s, border-color 0.2s;
+    width: 100%;
+}
+
+.guest-prompt__register:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: var(--red-border);
+}
+
+@media (max-width: 900px) {
+    .contact-layout {
+        flex-direction: column;
+        align-items: stretch;
+        min-height: 0;
+        padding: 24px 0 48px;
+    }
+
+    .contact-info,
+    .contact-form {
+        flex: none;
+        width: 100%;
+    }
+}
+/*
+ * Mismo fix que en user-form.css: en Safari de iOS real (no en el
+ * modo responsive de Safari en Mac, que usa el motor de macOS) el
+ * <select> de "Servicio"/"Selecciona tu moto" puede pintarse con
+ * texto invisible, y el <input type="datetime-local"> puede verse
+ * descuadrado si el font-size fuerza el auto-zoom de iOS al enfocar.
+ */
+select {
+    color-scheme: dark;
+    color: var(--ink, #f5f5f5);
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+select option {
+    color: initial;
+}
+
+input[type='datetime-local'] {
+    color-scheme: dark;
+    color: var(--ink, #f5f5f5);
+    font-size: 16px;
+}

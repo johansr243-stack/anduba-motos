@@ -1,0 +1,17 @@
+.outOfStock{
+    border-left: 1px solid var(--red);
+    box-shadow: inset 0 0 10px 5px #e5383b30;
+    border-radius: 0 10px 10px 0;
+}
+
+.off{
+    display: none;
+}
+
+.alertStock{
+    display: inline;
+    color: var(--red);
+    font-weight: 700;
+    text-align: center;
+    
+}

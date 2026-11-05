@@ -1,0 +1,235 @@
+<section class="account-page">
+  <div class="account-page__glow" aria-hidden="true"></div>
+
+  <div class="account-wrapper">
+    @if (!userId()) {
+      <div class="account-feedback" [attr.data-type]="feedback()?.type">{{ feedback()?.message }}</div>
+    } @else {
+      @if (loading()) {
+        <div class="account-loading-pill">
+          <span class="account-loading-dot"></span>
+          Actualizando tu información…
+        </div>
+      }
+
+      <header class="account-hero">
+        <div class="account-avatar"><span>{{ initials }}</span></div>
+        <div class="account-hero__info">
+          <h1>{{ form.value.firstName }} {{ form.value.lastName }}</h1>
+          <p class="account-hero__username">&#64;{{ form.value.username }}</p>
+          <div class="account-hero__meta">
+            <span class="account-role-badge" [attr.data-role]="roleLabel()">{{ roleLabel() }}</span>
+            @if (memberSince()) {
+              <span class="account-hero__since">Miembro desde {{ memberSince() }}</span>
+            }
+          </div>
+        </div>
+      </header>
+
+      @if (feedback(); as fb) {
+        <div class="account-feedback" [attr.data-type]="fb.type">{{ fb.message }}</div>
+      }
+
+      <nav class="account-tabs" [style.--tab-index]="tabIndex">
+        <div class="account-tabs__indicator"></div>
+        @for (tab of tabs; track tab.id) {
+          <button
+            type="button"
+            class="account-tabs__btn"
+            [class.active]="activeTab() === tab.id"
+            (click)="selectTab(tab.id)"
+          >
+            {{ tab.label }}
+          </button>
+        }
+      </nav>
+
+      <form [formGroup]="form" (ngSubmit)="save()" class="account-form" [class.account-form--loading]="loading()">
+        @if (activeTab() === 'perfil') {
+          <p class="account-section-label">Datos personales</p>
+          <div class="account-panel">
+            <div class="field-row">
+              <label for="firstName">Nombres</label>
+              <input id="firstName" type="text" formControlName="firstName" placeholder="Tu nombre" />
+            </div>
+            <div class="field-row">
+              <label for="middleName">Segundo nombre</label>
+              <input id="middleName" type="text" formControlName="middleName" placeholder="Opcional" />
+            </div>
+            <div class="field-row">
+              <label for="lastName">Apellido</label>
+              <input id="lastName" type="text" formControlName="lastName" placeholder="Tu apellido" />
+            </div>
+            <div class="field-row">
+              <label for="secondLastName">Segundo apellido</label>
+              <input id="secondLastName" type="text" formControlName="secondLastName" placeholder="Opcional" />
+            </div>
+            <div class="field-row">
+              <label for="document">Documento</label>
+              <input id="document" type="text" inputmode="numeric" formControlName="document" placeholder="Número de documento" />
+            </div>
+            <div class="field-row">
+              <label for="birthDate">Fecha de nacimiento</label>
+              <input id="birthDate" type="date" formControlName="birthDate" [attr.max]="maxBirthDate" />
+            </div>
+          </div>
+
+          <p class="account-section-label">Cuenta y contacto</p>
+          <div class="account-panel">
+            <div class="field-row">
+              <label for="username">Usuario</label>
+              <input id="username" type="text" formControlName="username" placeholder="Nombre de usuario" />
+            </div>
+            <div class="field-row">
+              <label for="phoneNumber">Teléfono</label>
+              <input id="phoneNumber" type="tel" formControlName="phoneNumber" placeholder="Tu número" />
+            </div>
+            <div class="field-row">
+              <label for="email">Correo</label>
+              <input id="email" type="email" formControlName="email" placeholder="tucorreo@ejemplo.com" />
+            </div>
+          </div>
+        }
+
+        @if (activeTab() === 'direccion') {
+          <p class="account-section-label">Dirección de envío</p>
+          <div class="account-panel" formGroupName="address">
+            <div class="field-row">
+              <label for="country">País</label>
+              <select
+                id="country"
+                formControlName="country"
+                (change)="onCountryChange($any($event.target).value)"
+              >
+                <option value="" disabled>Selecciona un país</option>
+                @for (c of countriesList$ | async; track c.iso2) {
+                  <option [value]="c.name">{{ c.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="field-row">
+              <label for="department">Departamento</label>
+              <select
+                id="department"
+                formControlName="department"
+                [disabled]="!(departmentsList$ | async)?.length"
+                (change)="onDepartmentChange($any($event.target).value)"
+              >
+                <option value="" disabled>Selecciona un departamento</option>
+                @for (s of departmentsList$ | async; track s.iso2) {
+                  <option [value]="s.name">{{ s.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="field-row">
+              <label for="city">Ciudad</label>
+              <select id="city" formControlName="city" [disabled]="!(citiesList$ | async)?.length">
+                <option value="" disabled>Selecciona una ciudad</option>
+                @for (city of citiesList$ | async; track city.name) {
+                  <option [value]="city.name">{{ city.name }}</option>
+                }
+              </select>
+            </div>
+            <div class="field-row">
+              <label for="neighborhood">Barrio</label>
+              <input id="neighborhood" type="text" formControlName="neighborhood" placeholder="Tu barrio" />
+            </div>
+            <div class="field-row">
+              <label for="street">Calle</label>
+              <input id="street" type="text" formControlName="street" placeholder="Calle" />
+            </div>
+            <div class="field-row">
+              <label for="carrera">Carrera</label>
+              <input id="carrera" type="text" formControlName="carrera" placeholder="Carrera" />
+            </div>
+          </div>
+        }
+
+        @if (activeTab() === 'seguridad') {
+          <p class="account-section-label">Seguridad</p>
+          <div class="account-panel">
+            <div class="field-row field-row--static">
+              <label>Contraseña</label>
+              <button type="button" class="btn-ghost" (click)="requestPasswordReset()">Cambiar contraseña</button>
+            </div>
+            <p class="field-hint">Te enviaremos un código de verificación a tu correo para restablecerla.</p>
+          </div>
+        }
+
+        @if (activeTab() === 'historial') {
+          @if (history$ | async; as history) {
+            <p class="account-section-label">Resumen</p>
+            <div class="account-panel">
+              <div class="field-row field-row--static">
+                <label>Servicios realizados</label>
+                <span>{{ history.services?.length || 0 }}</span>
+              </div>
+              <div class="field-row field-row--static">
+                <label>Gasto en servicios</label>
+                <span>{{ getTotal(history.services, 'finalCost') | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+              </div>
+              <div class="field-row field-row--static">
+                <label>Compras realizadas</label>
+                <span>{{ history.products?.length || 0 }}</span>
+              </div>
+              <div class="field-row field-row--static">
+                <label>Gasto en productos</label>
+                <span>{{ getTotal(history.products, 'total') | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+              </div>
+            </div>
+
+            @if (history.services?.length) {
+              <p class="account-section-label">Servicios</p>
+              <div class="account-panel">
+                @for (record of history.services; track record._id) {
+                  <div class="field-row field-row--static">
+                    <label>{{ record.appointment?.service?.name || 'Servicio' }} · {{ record.createdAt | date: 'd MMM y' }}</label>
+                    <span>{{ record.finalCost | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+                  </div>
+                }
+              </div>
+            }
+
+            @if (history.products?.length) {
+              <p class="account-section-label">Compras</p>
+              <div class="account-panel">
+                @for (order of history.products; track order._id) {
+                  <div class="field-row field-row--static purchase-row">
+                    <div class="purchase-row__main">
+                      <div class="purchase-row__items">
+                        @for (item of order.products; track item.product?._id) {
+                          <div class="purchase-item">
+                            <img
+                              class="purchase-item__img"
+                              [src]="item.product?.productImages?.[0] | imageUrl"
+                              [alt]="item.product?.name || 'Producto'"
+                            />
+                            <span>{{ item.quantity }}x {{ item.product?.name || 'Producto' }}</span>
+                          </div>
+                        }
+                      </div>
+                      <span class="field-hint" style="margin: 6px 0 0;">{{ order.createdAt | date: 'd MMM y' }}</span>
+                    </div>
+                    <span>{{ order.total | currency: 'COP' : 'symbol-narrow' : '1.0-0' }}</span>
+                  </div>
+                }
+              </div>
+            }
+          } @else {
+            <p class="field-hint">Todavía no tienes servicios ni compras registradas.</p>
+          }
+        }
+
+        <div class="save-bar" [class.visible]="form.dirty">
+          <span class="save-bar__text">Tienes cambios sin guardar</span>
+          <div class="save-bar__actions">
+            <button type="button" class="btn-ghost" (click)="discardChanges()">Descartar</button>
+            <button type="submit" class="btn-save" [disabled]="form.invalid || saving()">
+              {{ saving() ? 'Guardando…' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    }
+  </div>
+</section>

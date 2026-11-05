@@ -1,0 +1,75 @@
+@if (filteredAppointments$ | async; as appointments) {
+<div class="users-container">
+    <div class="users-wrapper">
+
+        <div class="header">
+            <h1>CITAS</h1>
+            <p>Gestionar y administrar las citas del sistema</p>
+        </div>
+
+        <div class="toolbar">
+            <div class="search-box">
+                <input type="text" placeholder="Buscar por cliente, vehículo..."
+                    (input)="onSearchChange($any($event.target).value)" />
+            </div>
+            <select (change)="onFilterChange($any($event.target).value)">
+                <option value="">Filtrar por estado</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="aplazada">Aplazada</option>
+                <option value="cancelada">Cancelada</option>
+            </select>
+            <button class="btn-new" routerLink="/appointment">
+                + NUEVA CITA
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <p class="stat-label">Total Citas</p>
+                <p class="stat-value">{{ getAllAppointments() }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Confirmadas</p>
+                <p class="stat-value active">{{ getConfirmedAppointments() }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Pendientes</p>
+                <p class="stat-value warn">{{ getPendingAppointments() }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Aplazadas</p>
+                <p class="stat-value warn">{{ getPostponedAppointments() }}</p>
+            </div>
+            <div class="stat-card">
+                <p class="stat-label">Canceladas</p>
+                <p class="stat-value suspended">{{ getCancelledAppointments() }}</p>
+            </div>
+        </div>
+
+        <div class="users-list-wrapper">
+            <div class="users-header">
+                <div class="header-cell">CLIENTE</div>
+                <div class="header-cell">VEHÍCULO</div>
+                <div class="header-cell">SERVICIO</div>
+                <div class="header-cell">FECHA</div>
+                <div class="header-cell">ESTADO</div>
+                <div class="header-cell">ACCIONES</div>
+            </div>
+
+            @for (appointment of appointments; track appointment._id) {
+            <app-appointment-list-card [appointment]="appointment" (edit)="onEdit($event)" (delete)="onDelete($event)">
+            </app-appointment-list-card>
+            } @empty {
+            <p class="form-hint" style="padding: 20px;">No hay citas que coincidan con la búsqueda.</p>
+            }
+        </div>
+
+        <div class="pagination">
+            <span>{{ 'Mostrando ' + appointments.length + ' de ' + getAllAppointments() + ' citas' }}</span>
+            <span></span>
+        </div>
+
+    </div>
+</div>
+}

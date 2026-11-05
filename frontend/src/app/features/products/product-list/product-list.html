@@ -1,0 +1,69 @@
+<div class="users-container">
+  <div class="users-wrapper">
+    <div class="header">
+      <h1>PRODUCTOS</h1>
+      <p>Gestionar y administrar productos registrados</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" placeholder="Buscar por nombre, código, número de serie..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()">
+      </div>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <option value="" disabled>Filtrar por estado</option>
+        <option value="">Todos</option>
+        <option value="disponible">Disponible</option>
+        <option value="no disponible">No disponible</option>
+        <option value="pendiente">Pendiente</option>
+        <option value="agotado">Agotado</option>
+      </select>
+      <button class="btn-new" routerLink="/dashboard/products/new" routerLinkActive="active">+ NUEVO PRODUCTO</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total Productos</p>
+        <p class="stat-value">{{getAllProducts()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Disponibles</p>
+        <p class="stat-value active">{{getAvailableProducts()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">No disponibles</p>
+        <p class="stat-value">{{getUnavailableProducts()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Pendientes</p>
+        <p class="stat-value warn">{{getPendingProducts()}}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Agotados</p>
+        <p class="stat-value suspended">{{getOutOfStockProducts()}}</p>
+      </div>
+    </div>
+
+<div class="users-list-wrapper">
+      <!-- HEADER -->
+      <div class="users-header">
+        <div class="header-cell">NOMBRE</div>
+        <div class="header-cell">PRECIO</div>
+        <div class="header-cell">STOCK</div>
+        <div class="header-cell">ESTADO</div>
+        <div class="header-cell">REGISTRO</div>
+        <div class="header-cell">ACCIONES</div>
+      </div>
+            @for (product of filteredProducts$ | async; track $index) {
+                
+              <product-list-card [product]="product" (delete)="onDelete($event)">
+              </product-list-card>
+            }
+       
+    </div>
+
+    <div class="pagination">
+      <span>Mostrando {{(filteredProducts$ | async)?.length}} de {{getAllProducts()}} productos</span>
+   <span></span>
+    </div>
+  </div>
+</div>

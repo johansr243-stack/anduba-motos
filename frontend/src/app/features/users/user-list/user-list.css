@@ -1,0 +1,18 @@
+
+:host {
+  display: block;
+}
+
+.users-header {
+  grid-template-columns: 1fr 1.5fr 0.5fr 0.5fr 1.2fr 1fr;
+}
+
+.test {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+fa-icon {
+  margin-bottom: 8px;
+}

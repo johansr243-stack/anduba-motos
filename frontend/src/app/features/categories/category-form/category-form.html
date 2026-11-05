@@ -1,0 +1,67 @@
+<div class="form-page-bg">
+  <app-back-button fallback="/categories" />
+  <div class="form-page">
+
+    <div class="form-header">
+      <h1>{{ isEditMode ? 'Editar Categoría' : 'Registrar Categoría' }}</h1>
+      <p>{{ isEditMode ? 'Actualice la información de la categoría.' : 'Complete la información para registrar una nueva categoría.' }}</p>
+    </div>
+
+    <form [formGroup]="formData" (ngSubmit)="onSubmit()">
+
+      <div class="form-section">
+
+        <div class="form-section-title">
+          Información de la categoría
+        </div>
+
+        <div class="form-section-body">
+
+          <div class="form-field-full">
+            <label for="c-name">Nombre</label>
+            <input
+              id="c-name"
+              type="text"
+              formControlName="name"
+              placeholder="Nombre de la categoría">
+            @if (name?.invalid && (name?.dirty || name?.touched)) {
+              @if (name?.errors?.['required']) {
+                <small class="form-error">El nombre es obligatorio</small>
+              }
+              @if (name?.errors?.['minlength']) {
+                <small class="form-error">El nombre debe tener al menos 2 caracteres</small>
+              }
+              @if (name?.errors?.['maxlength']) {
+                <small class="form-error">El nombre no puede tener más de 50 caracteres</small>
+              }
+            }
+          </div>
+
+          <div class="form-field-full">
+            <label for="c-description">Descripción</label>
+            <textarea
+              id="c-description"
+              formControlName="description"
+              placeholder="Descripción de la categoría">
+            </textarea>
+            @if (description?.invalid && (description?.dirty || description?.touched)) {
+              @if (description?.errors?.['maxlength']) {
+                <small class="form-error">La descripción no puede tener más de 1500 caracteres</small>
+              }
+            }
+          </div>
+
+          <div class="form-field-full">
+            <button class="form-submit" type="submit" [disabled]="formData.invalid">
+              {{ isEditMode ? 'Actualizar Categoría' : 'Registrar Categoría' }}
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+
+    </form>
+
+  </div>
+</div>

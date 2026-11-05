@@ -1,0 +1,67 @@
+<div class="users-container">
+  <div class="users-wrapper">
+    <div class="header">
+      <div class="test">
+        <h1>USUARIOS </h1>
+<fa-icon [icon]="faCoffee" size="xl" [style.color]="'#E5383B'" /></div>
+      <p>Gestionar y administrar usuarios del sistema</p>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <input type="text" placeholder="Buscar por nombre, email, usuario..." [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()" />
+      </div>
+      <select [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        <option value="" disabled>Filtrar por estado</option>
+        <option value="">Todos</option>
+        <option value="active">Activo</option>
+        <option value="inactive">Inactivo</option>
+        <option value="banned">Baneado</option>
+      </select>
+      <button class="btn-new" routerLink="/dashboard/users/new" routerLinkActive="active">
+        + NUEVO USUARIO
+      </button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Total Usuarios</p>
+        <p class="stat-value">{{ getAllUsers() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Activos</p>
+        <p class="stat-value active">{{ getActiveUsers() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Inactivos</p>
+        <p class="stat-value">{{ getInactiveUsers() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Baneados</p>
+        <p class="stat-value suspended">{{ getBannedUsers() }}</p>
+      </div>
+    </div>
+
+    <div class="users-list-wrapper">
+    
+      <div class="users-header">
+        <div class="header-cell">NOMBRE</div>
+        <div class="header-cell">EMAIL</div>
+        <div class="header-cell">ROL</div>
+        <div class="header-cell">ESTADO</div>
+        <div class="header-cell">REGISTRO</div>
+        <div class="header-cell">ACCIONES</div>
+      </div>
+
+     
+      @for (user of filteredUsers$ | async; track $index) {
+        <user-list-card [user]="user" (edit)="onEdit($event)" (delete)="onDelete($event)"> </user-list-card>
+      }
+    </div>
+
+    <div class="pagination">
+      <span>Mostrando {{(filteredUsers$ | async)?.length}} de {{getAllUsers()}} usuarios</span>
+     <span></span>
+    </div>
+  </div>
+</div>

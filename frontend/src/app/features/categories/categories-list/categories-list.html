@@ -1,0 +1,41 @@
+<div class="users-container">
+  <div class="users-wrapper">
+
+    <div class="header">
+      <h1>Categorías</h1>
+      <p>Administración de categorías registradas.</p>
+    </div>
+
+    <div class="categories-toolbar">
+      <div class="search-box">
+        <input type="text" placeholder="Buscar por nombre..." />
+      </div>
+      <span class="categories-count">{{ getAllCategories() }} categorías</span>
+      <button class="btn-new" routerLink="/dashboard/categories/new" routerLinkActive="active">
+        + NUEVA CATEGORÍA
+      </button>
+    </div>
+
+    <div class="categories-grid">
+      @for (category of (categoryList$ | async); track category._id) {
+        <div class="category-chip">
+          <div class="category-chip-main">
+            <p class="category-chip-name">{{ category.name }}</p>
+            <p class="category-chip-desc">{{ category.description || 'Sin descripción' }}</p>
+          </div>
+          <div class="category-chip-actions">
+            <button class="btn-edit" (click)="onEdit(category._id)">
+              Editar
+            </button>
+            <button class="btn-delete" (click)="onDelete(category._id)">
+              Eliminar
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <p class="categories-empty">No hay categorías registradas todavía.</p>
+      }
+    </div>
+
+  </div>
+</div>

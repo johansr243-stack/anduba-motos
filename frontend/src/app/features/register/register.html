@@ -1,0 +1,362 @@
+<div class="register-page">
+
+  <div class="float-shape shape-a" aria-hidden="true"></div>
+  <div class="float-shape shape-b" aria-hidden="true"></div>
+  <div class="float-shape shape-c" aria-hidden="true"></div>
+  <div class="float-shape shape-d" aria-hidden="true"></div>
+
+  <div class="register-stage">
+    <form class="register-card" [formGroup]="formData" (ngSubmit)="onSubmit()">
+
+      <div class="register-head">
+        <h1 class="register-title">{{ stepTitles[currentStep] }}</h1>
+        <p class="register-sub">{{ stepSubtitles[currentStep] }}</p>
+        <span class="register-bar" aria-hidden="true"></span>
+      </div>
+
+
+      <div class="steps-track" aria-hidden="true">
+        @for (step of steps; track step) {
+          <div
+            class="step-dot"
+            [class.active]="currentStep === step"
+            [class.done]="currentStep > step"
+            (click)="goToStep(step)"
+          >
+            @if (currentStep > step) {
+              <span>✓</span>
+            } @else {
+              <span>{{ step }}</span>
+            }
+          </div>
+          @if (step < totalSteps) {
+            <div class="step-line" [class.done]="currentStep > step"></div>
+          }
+        }
+      </div>
+
+
+      @if (currentStep === 1) {
+        <div class="register-fields step-panel">
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="username?.invalid && (username?.dirty || username?.touched)">
+              <label for="username">Usuario</label>
+              <input
+                type="text"
+                id="username"
+                formControlName="username"
+                placeholder="miNombreDeUsuario"
+                autocomplete="username"
+              />
+              @if (username?.invalid && (username?.dirty || username?.touched)) {
+                @if (username?.errors?.['required']) {
+                  <small class="field-error">El usuario es obligatorio</small>
+                }
+                @if (username?.errors?.['minlength']) {
+                  <small class="field-error">Mínimo 2 caracteres</small>
+                }
+                @if (username?.errors?.['maxlength']) {
+                  <small class="field-error">Máximo 20 caracteres</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="email?.invalid && (email?.dirty || email?.touched)">
+              <label for="email">Correo</label>
+              <input
+                type="email"
+                id="email"
+                formControlName="email"
+                placeholder="tucorreo@ejemplo.com"
+                autocomplete="email"
+              />
+              @if (email?.invalid && (email?.dirty || email?.touched)) {
+                @if (email?.errors?.['required']) {
+                  <small class="field-error">El correo es obligatorio</small>
+                }
+                @if (email?.errors?.['email']) {
+                  <small class="field-error">Ingresa un correo válido</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="password?.invalid && (password?.dirty || password?.touched)">
+              <label for="password">Contraseña</label>
+              <input
+                type="password"
+                id="password"
+                formControlName="password"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              @if (password?.invalid && (password?.dirty || password?.touched)) {
+                @if (password?.errors?.['required']) {
+                  <small class="field-error">La contraseña es obligatoria</small>
+                }
+                @if (password?.errors?.['minlength']) {
+                  <small class="field-error">Mínimo 8 caracteres</small>
+                }
+              }
+            </div>
+
+            <div
+              class="field"
+              [class.is-invalid]="confirmPassword?.invalid && (confirmPassword?.dirty || confirmPassword?.touched)"
+            >
+              <label for="confirmPassword">Confirmar contraseña</label>
+              <input
+                type="password"
+                id="confirmPassword"
+                formControlName="confirmPassword"
+                placeholder="••••••••"
+                autocomplete="new-password"
+              />
+              @if (confirmPassword?.invalid && (confirmPassword?.dirty || confirmPassword?.touched)) {
+                @if (confirmPassword?.errors?.['required']) {
+                  <small class="field-error">Debes confirmar la contraseña</small>
+                }
+                @if (confirmPassword?.errors?.['minlength']) {
+                  <small class="field-error">Mínimo 8 caracteres</small>
+                }
+                @if (confirmPassword?.errors?.['passwordMismatch']) {
+                  <small class="field-error">Las contraseñas no coinciden</small>
+                }
+              }
+            </div>
+          </div>
+
+          <label class="register-terms">
+            <input type="checkbox" formControlName="terms" />
+            <span>Acepto los <a href="#" (click)="$event.preventDefault()">términos y condiciones</a></span>
+          </label>
+        </div>
+      }
+
+     
+      @if (currentStep === 2) {
+        <div class="register-fields step-panel">
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="firstName?.invalid && (firstName?.dirty || firstName?.touched)">
+              <label for="firstName">Nombre</label>
+              <input type="text" id="firstName" formControlName="firstName" maxlength="50" placeholder="Juan" />
+              @if (firstName?.invalid && (firstName?.dirty || firstName?.touched)) {
+                @if (firstName?.errors?.['required']) {
+                  <small class="field-error">El nombre es obligatorio</small>
+                }
+                @if (firstName?.errors?.['minlength']) {
+                  <small class="field-error">Demasiado corto</small>
+                }
+                @if (firstName?.errors?.['maxlength']) {
+                  <small class="field-error">Demasiado largo</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="middleName?.invalid && (middleName?.dirty || middleName?.touched)">
+              <label for="middleName">Segundo nombre</label>
+              <input type="text" id="middleName" formControlName="middleName" maxlength="50" placeholder="Pablo" />
+              @if (middleName?.invalid && (middleName?.dirty || middleName?.touched)) {
+                @if (middleName?.errors?.['minlength']) {
+                  <small class="field-error">Demasiado corto</small>
+                }
+                @if (middleName?.errors?.['maxlength']) {
+                  <small class="field-error">Demasiado largo</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="lastName?.invalid && (lastName?.dirty || lastName?.touched)">
+              <label for="lastName">Primer apellido</label>
+              <input type="text" id="lastName" formControlName="lastName" maxlength="50" placeholder="Rodríguez" />
+              @if (lastName?.invalid && (lastName?.dirty || lastName?.touched)) {
+                @if (lastName?.errors?.['required']) {
+                  <small class="field-error">El apellido es obligatorio</small>
+                }
+                @if (lastName?.errors?.['minlength']) {
+                  <small class="field-error">Demasiado corto</small>
+                }
+                @if (lastName?.errors?.['maxlength']) {
+                  <small class="field-error">Demasiado largo</small>
+                }
+              }
+            </div>
+
+            <div
+              class="field"
+              [class.is-invalid]="secondLastName?.invalid && (secondLastName?.dirty || secondLastName?.touched)"
+            >
+              <label for="secondLastName">Segundo apellido</label>
+              <input
+                type="text"
+                id="secondLastName"
+                formControlName="secondLastName"
+                maxlength="50"
+                placeholder="Pérez"
+              />
+              @if (secondLastName?.invalid && (secondLastName?.dirty || secondLastName?.touched)) {
+                @if (secondLastName?.errors?.['maxlength']) {
+                  <small class="field-error">Demasiado largo</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="document?.invalid && (document?.dirty || document?.touched)">
+              <label for="document">Documento</label>
+              <input type="text" id="document" formControlName="document" maxlength="16" placeholder="111111111" />
+              @if (document?.invalid && (document?.dirty || document?.touched)) {
+                @if (document?.errors?.['required']) {
+                  <small class="field-error">El documento es obligatorio</small>
+                }
+                @if (document?.errors?.['maxlength']) {
+                  <small class="field-error">Máximo 16 caracteres</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)">
+              <label for="phoneNumber">Teléfono</label>
+              <input type="tel" id="phoneNumber" formControlName="phoneNumber" maxlength="13" placeholder="311 1111111" />
+              @if (phoneNumber?.invalid && (phoneNumber?.dirty || phoneNumber?.touched)) {
+                @if (phoneNumber?.errors?.['required']) {
+                  <small class="field-error">El teléfono es obligatorio</small>
+                }
+                @if (phoneNumber?.errors?.['maxlength']) {
+                  <small class="field-error">Máximo 13 caracteres</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field field-full" [class.is-invalid]="birthDate?.invalid && (birthDate?.dirty || birthDate?.touched)">
+              <label for="birthDate">Fecha de nacimiento</label>
+              <input type="date" id="birthDate" formControlName="birthDate" />
+              @if (birthDate?.invalid && (birthDate?.dirty || birthDate?.touched)) {
+                @if (birthDate?.errors?.['required']) {
+                  <small class="field-error">La fecha de nacimiento es obligatoria</small>
+                }
+                @if (birthDate?.errors?.['underage']) {
+                  <small class="field-error">Debes ser mayor de 18 años</small>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+    
+      @if (currentStep === 3) {
+        <div class="register-fields step-panel" formGroupName="address">
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="country?.invalid && (country?.dirty || country?.touched)">
+              <label for="country">País</label>
+              <select id="country" formControlName="country" (change)="onCountryChange($any($event.target).value)">
+                <option value="" disabled selected>Selecciona un país</option>
+                @for (item of countriesList$ | async; track item.iso2) {
+                  <option [value]="item.name">{{ item.name }}</option>
+                }
+              </select>
+              @if (country?.invalid && (country?.dirty || country?.touched)) {
+                @if (country?.errors?.['required']) {
+                  <small class="field-error">El país es obligatorio</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="department?.invalid && (department?.dirty || department?.touched)">
+              <label for="department">Departamento</label>
+              <select id="department" formControlName="department" (change)="onDepartmentChange($any($event.target).value)">
+                <option value="" disabled selected>
+                  {{ (departmentsList$ | async)?.length ? 'Selecciona un departamento' : 'Selecciona primero un país' }}
+                </option>
+                @for (item of departmentsList$ | async; track item.iso2) {
+                  <option [value]="item.name">{{ item.name }}</option>
+                }
+              </select>
+              @if (department?.invalid && (department?.dirty || department?.touched)) {
+                @if (department?.errors?.['required']) {
+                  <small class="field-error">El departamento es obligatorio</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="city?.invalid && (city?.dirty || city?.touched)">
+              <label for="city">Ciudad</label>
+              <select id="city" formControlName="city">
+                <option value="" disabled selected>
+                  {{ (citiesList$ | async)?.length ? 'Selecciona una ciudad' : 'Selecciona primero un departamento' }}
+                </option>
+                @for (item of citiesList$ | async; track item.id) {
+                  <option [value]="item.name">{{ item.name }}</option>
+                }
+              </select>
+              @if (city?.invalid && (city?.dirty || city?.touched)) {
+                @if (city?.errors?.['required']) {
+                  <small class="field-error">La ciudad es obligatoria</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="neighborhood?.invalid && (neighborhood?.dirty || neighborhood?.touched)">
+              <label for="neighborhood">Barrio</label>
+              <input type="text" id="neighborhood" formControlName="neighborhood" placeholder="Bosa" />
+              @if (neighborhood?.invalid && (neighborhood?.dirty || neighborhood?.touched)) {
+                @if (neighborhood?.errors?.['required']) {
+                  <small class="field-error">El barrio es obligatorio</small>
+                }
+              }
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field" [class.is-invalid]="street?.invalid && (street?.dirty || street?.touched)">
+              <label for="street">Calle</label>
+              <input type="text" id="street" formControlName="street" placeholder="30" />
+              @if (street?.invalid && (street?.dirty || street?.touched)) {
+                @if (street?.errors?.['required']) {
+                  <small class="field-error">La calle es obligatoria</small>
+                }
+              }
+            </div>
+
+            <div class="field" [class.is-invalid]="carrera?.invalid && (carrera?.dirty || carrera?.touched)">
+              <label for="carrera">Carrera</label>
+              <input type="text" id="carrera" formControlName="carrera" placeholder="40" />
+              @if (carrera?.invalid && (carrera?.dirty || carrera?.touched)) {
+                @if (carrera?.errors?.['required']) {
+                  <small class="field-error">La carrera es obligatoria</small>
+                }
+              }
+            </div>
+          </div>
+        </div>
+      }
+
+
+      <div class="step-actions">
+        @if (currentStep > 1) {
+          <button type="button" class="step-back" (click)="prevStep()">← Atrás</button>
+        }
+        @if (currentStep < totalSteps) {
+          <button type="button" class="register-submit" (click)="nextStep()">Continuar</button>
+        } @else {
+          <button type="submit" class="register-submit" [disabled]="formData.invalid">Crear cuenta</button>
+        }
+      </div>
+
+      @if (currentStep === 1) {
+        <p class="register-footer">¿Ya tienes cuenta? <a routerLink="/login">Inicia sesión</a></p>
+      }
+
+    </form>
+  </div>
+
+</div>

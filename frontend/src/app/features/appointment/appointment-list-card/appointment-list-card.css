@@ -1,0 +1,23 @@
+/* El .user-card global ya trae grid, padding, hover, border-bottom.
+   Solo sobreescribimos el ancho de columnas (citas tienen 6 columnas
+   distintas a las de usuarios) y los colores de estado, que no
+   existen en el sistema global porque son propios de citas. */
+
+.appointment-card {
+    grid-template-columns: 1.3fr 1fr 1.2fr 1fr 0.8fr 1fr;
+}
+
+.appointment-status-confirmada,
+.appointment-status-confirmed {
+    color: var(--green);
+}
+
+.appointment-status-pendiente,
+.appointment-status-pending {
+    color: var(--amber);
+}
+
+.appointment-status-cancelada,
+.appointment-status-cancelled {
+    color: var(--red);
+}

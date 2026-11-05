@@ -1,0 +1,83 @@
+<div class="users-container">
+  <div class="users-wrapper">
+    <div class="header">
+      <div class="test">
+        <h1>CARRITOS</h1>
+        <fa-icon [icon]="faCartShopping" size="xl" [style.color]="'#E5383B'" />
+      </div>
+      <p>Carritos de compra activos de todos los clientes.</p>
+    </div>
+
+    <div class="cart-toolbar">
+      <div class="search-box">
+        <input
+          type="text"
+          placeholder="Buscar por cliente, email o producto..."
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <span class="cart-count">
+        Mostrando {{ (filteredCarts$ | async)?.length }} de {{ getTotalCarts() }} carritos
+      </span>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <p class="stat-label">Carritos activos</p>
+        <p class="stat-value">{{ getTotalCarts() }}</p>
+      </div>
+      <div class="stat-card">
+        <p class="stat-label">Valor total en carritos</p>
+        <p class="stat-value">{{ getTotalValue() | currency: 'COP ': 'symbol': '1.0' }}</p>
+      </div>
+    </div>
+
+    <div class="carts-list">
+      @for (cart of filteredCarts$ | async; track cart.user._id) {
+        <div class="cart-card" [class.cart-card-expanded]="isExpanded(cart)">
+          <button
+            type="button"
+            class="cart-card-header"
+            (click)="toggleExpand(cart)"
+            [attr.aria-expanded]="isExpanded(cart)"
+          >
+            <div class="cart-card-user">
+              <span class="cart-card-username">{{ cart.user?.username || 'Cliente' }}</span>
+              <span class="cart-card-email">{{ cart.user?.email }}</span>
+            </div>
+
+            <div class="cart-card-summary">
+              <span class="cart-card-count">{{ getTotalItems(cart) }} artículos</span>
+              <span class="cart-card-total">{{ cart.price | currency: 'COP ': 'symbol': '1.0' }}</span>
+              <fa-icon class="cart-card-chevron" [icon]="faChevronDown" />
+            </div>
+          </button>
+
+          @if (isExpanded(cart)) {
+            <div class="cart-card-items">
+              @for (item of cart.products; track item.product?._id) {
+                <div class="cart-item-row">
+                  <img
+                    class="cart-item-img"
+                    [src]="item.product?.productImages?.[0] | imageUrl"
+                    [alt]="item.product?.name"
+                  />
+                  <div class="cart-item-info">
+                    <span class="cart-item-name">{{ item.product?.name }}</span>
+                    <span class="cart-item-price">{{ item.unitPrice | currency: 'COP ': 'symbol': '1.0' }}</span>
+                  </div>
+                  <span class="cart-item-qty">x{{ item.quantity }}</span>
+                </div>
+              } @empty {
+                <p class="cart-card-empty">Este carrito no tiene productos.</p>
+              }
+            </div>
+          }
+        </div>
+      } @empty {
+        <p class="carts-empty">No hay carritos activos en este momento.</p>
+      }
+    </div>
+  </div>
+</div>

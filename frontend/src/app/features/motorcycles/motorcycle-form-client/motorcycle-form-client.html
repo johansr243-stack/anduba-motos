@@ -1,0 +1,108 @@
+<div class="moto-page">
+
+  <div class="float-shape shape-a" aria-hidden="true"></div>
+  <div class="float-shape shape-b" aria-hidden="true"></div>
+  <div class="float-shape shape-c" aria-hidden="true"></div>
+  <div class="float-shape shape-d" aria-hidden="true"></div>
+
+  <div class="moto-stage">
+    <form class="moto-card" [formGroup]="formData" (ngSubmit)="onSubmit()">
+
+      <div class="moto-head">
+        <h1 class="moto-title">Registra tu moto</h1>
+        <p class="moto-sub">Necesitamos estos datos para poder agendarte una cita</p>
+        <span class="moto-bar" aria-hidden="true"></span>
+      </div>
+
+      <div class="moto-fields">
+
+        <div class="field-row">
+          <div class="field" [class.is-invalid]="licensePlate?.invalid && (licensePlate?.dirty || licensePlate?.touched)">
+            <label for="licensePlate">Placa</label>
+            <input
+              type="text"
+              id="licensePlate"
+              formControlName="licensePlate"
+              placeholder="ABC123"
+              autocomplete="off"
+            />
+            @if (licensePlate?.invalid && (licensePlate?.dirty || licensePlate?.touched)) {
+              @if (licensePlate?.errors?.['required']) {
+                <small class="field-error">La placa es obligatoria</small>
+              }
+              @if (licensePlate?.errors?.['maxlength']) {
+                <small class="field-error">Máximo 6 caracteres</small>
+              }
+              @if (licensePlate?.errors?.['invalidPlate']) {
+                <small class="field-error">Placa no válida. Formato: 3 letras y 3 números (ABC123). El último número puede ser una letra (ABC12A)</small>
+              }
+            }
+          </div>
+
+          <div class="field field-autocomplete" [class.is-invalid]="brand?.invalid && (brand?.dirty || brand?.touched)">
+            <label for="brand">Marca</label>
+            <input
+              type="text"
+              id="brand"
+              [formControl]="brandSearchControl"
+              (focus)="onBrandSearchFocus()"
+              (blur)="onBrandSearchBlur()"
+              placeholder="Busca una marca..."
+              autocomplete="off"
+            />
+            @if (showBrandResults) {
+              <ul class="field-results">
+                @for (marca of brandResults; track marca) {
+                  <li (mousedown)="selectBrand(marca)">{{ marca }}</li>
+                }
+              </ul>
+            }
+            @if (brand?.invalid && (brand?.dirty || brand?.touched)) {
+              @if (brand?.errors?.['required']) {
+                <small class="field-error">La marca es obligatoria</small>
+              }
+            }
+          </div>
+        </div>
+
+        <div class="field-row">
+          <div class="field" [class.is-invalid]="modelName?.invalid && (modelName?.dirty || modelName?.touched)">
+            <label for="modelName">Modelo</label>
+            <input
+              type="text"
+              id="modelName"
+              formControlName="modelName"
+              placeholder="Modelo de la motocicleta"
+            />
+            @if (modelName?.invalid && (modelName?.dirty || modelName?.touched)) {
+              @if (modelName?.errors?.['required']) {
+                <small class="field-error">El modelo es obligatorio</small>
+              }
+            }
+          </div>
+
+          <div class="field" [class.is-invalid]="color?.invalid && (color?.dirty || color?.touched)">
+            <label for="color">Color</label>
+            <input type="text" id="color" formControlName="color" placeholder="Color" />
+            @if (color?.invalid && (color?.dirty || color?.touched)) {
+              @if (color?.errors?.['required']) {
+                <small class="field-error">El color es obligatorio</small>
+              }
+            }
+          </div>
+        </div>
+
+      </div>
+
+      <button class="moto-submit" type="submit" [disabled]="formData.invalid">
+        Registrar moto
+      </button>
+
+      <p class="moto-footer">
+        <a [routerLink]="'/contact'" [queryParams]="backQueryParams">← Volver a agendar tu cita</a>
+      </p>
+
+    </form>
+  </div>
+
+</div>

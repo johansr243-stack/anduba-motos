@@ -1,0 +1,135 @@
+<div class="detail-backdrop" [class.is-open]="isOpen" (click)="onBackdropClick()">
+  <div
+    class="detail-panel"
+    #panel
+    [class.show-content]="showContent"
+    (click)="$event.stopPropagation()"
+  >
+    <button class="detail-close" (click)="requestClose()" aria-label="Cerrar">
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+      >
+        <path d="M18 6 6 18M6 6l12 12" />
+      </svg>
+    </button>
+
+    <div class="detail-media">
+      @if (images.length) {
+        <div
+          class="detail-image-track"
+          [style.transform]="'translateX(-' + currentImage * 100 + '%)'"
+        >
+          @for (img of images; track img) {
+            <div class="detail-image-slide">
+              <img [src]="img |imageUrl" [alt]="product.name" />
+            </div>
+          }
+        </div>
+
+        @if (hasMultipleImages) {
+          <button class="detail-nav prev" (click)="prevImage()" aria-label="Imagen anterior">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <button class="detail-nav next" (click)="nextImage()" aria-label="Siguiente imagen">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+
+          <div class="detail-dots">
+            @for (img of images; track img; let i = $index) {
+              <button
+                class="detail-dot"
+                [class.active]="i === currentImage"
+                (click)="goToImage(i)"
+                [attr.aria-label]="'Ir a imagen ' + (i + 1)"
+              ></button>
+            }
+          </div>
+
+          <span class="detail-counter">{{ currentImage + 1 }} / {{ images.length }}</span>
+        }
+      } @else {
+        <div class="detail-no-image">Sin imágenes</div>
+      }
+    </div>
+
+    <div class="detail-info">
+      <div class="detail-info-top">
+        <div class="detail-info-top-row">
+          <span class="detail-status" [class.out]="product.status !== 'disponible'">
+            <span class="status-dot"></span>
+            {{ product.status | uppercase }}
+          </span>
+          <span class="detail-nr">REF. {{ product.nr }}</span>
+        </div>
+
+        <h2 class="detail-name">{{ product.name }}</h2>
+
+        @if (product.description) {
+          <p class="detail-description">{{ product.description }}</p>
+        }
+
+        <div class="detail-meta">
+          <div class="detail-meta-item">
+            <span class="meta-label">Stock disponible</span>
+            <span class="meta-value">{{ product.stock }} unidades</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-footer">
+        <div class="detail-price">
+          <span class="price-label">Precio</span>
+          <span class="price-value">{{
+            displayPrice() | currency: 'COP ' : 'symbol' : '1.0'
+          }}</span>
+        </div>
+        <button class="btn-agregar-lg" [class.added]="justAdded" (click)="addToCart()">
+          <span class="btn-agregar-lg__label">{{ justAdded ? 'Agregado' : 'Agregar al carrito' }}</span>
+          <span class="btn-agregar-lg__icon">
+            <svg
+              class="icon-plus"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+            >
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            <svg
+              class="icon-check"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M5 13l4 4L19 7" />
+            </svg>
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

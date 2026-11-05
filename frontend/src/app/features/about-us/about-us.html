@@ -1,0 +1,45 @@
+<div class="users-container">
+    <div class="users-wrapper">
+
+        <div class="about-hero">
+            <span class="services-eyebrow">
+                <span class="services-eyebrow__dot"></span>
+                Sobre el taller
+            </span>
+            <h1>Pasión por las <span class="accent">motos</span>, compromiso con vos</h1>
+            <p class="about-hero__text">
+                En AndubaMotos llevamos años ayudando a que cada motociclista llegue lejos, con seguridad
+                y sin sorpresas. Somos un taller especializado, no un lugar más donde dejar tu moto.
+            </p>
+        </div>
+
+        <div class="stats-grid about-stats">
+            @for (stat of stats; track stat.label) {
+            <div class="stat-card">
+                <p class="stat-value about-stat-value">{{ stat.value }}</p>
+                <p class="stat-label">{{ stat.label }}</p>
+            </div>
+            }
+        </div>
+
+        <div class="about-section-title">Lo que nos define</div>
+        <div class="about-values-grid">
+            @for (value of values; track value.title) {
+            <article class="about-value-card">
+                <div class="about-value-card__marker"></div>
+                <h3 class="about-value-card__title">{{ value.title }}</h3>
+                <p class="about-value-card__text">{{ value.description }}</p>
+            </article>
+            }
+        </div>
+
+        <div class="about-cta">
+            <div class="about-cta__text">
+                <h2>¿Tu moto necesita una revisión?</h2>
+                <p>Agenda tu cita en minutos y déjanos cuidar de ella.</p>
+            </div>
+            <a class="btn-new" routerLink="/services">Ver servicios</a>
+        </div>
+
+    </div>
+</div>

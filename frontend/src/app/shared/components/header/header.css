@@ -1,0 +1,246 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600&family=Inter:wght@400;500;600&display=swap');
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.header-spacer {
+  height: calc(64px + env(safe-area-inset-top, 0px));
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 2rem;
+  gap: 20px;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 20px);
+  height: calc(64px + env(safe-area-inset-top, 0px));
+  background: rgba(10, 10, 11, 0.86);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  transition: background 0.4s;
+}
+
+.app-header:hover {
+  background: rgba(10, 10, 11, 0.94);
+}
+
+.header-logo {
+  grid-column: 1;
+  justify-self: start;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  z-index: 10;
+}
+
+nav {
+  grid-column: 2;
+  justify-self: center;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-actions {
+  grid-column: 3;
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #f2f1ee;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.logo-text span {
+  color: #e5383b;
+}
+
+.header-nav {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  height: 64px;
+}
+
+.header-nav li a {
+  display: flex;
+  align-items: center;
+  height: 64px;
+  padding: 0 1.1rem;
+  font-family: 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 20px;
+  font-weight: 500;
+  color: #8d8d92;
+  text-decoration: none;
+  letter-spacing: 0.01em;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.header-nav li a::after {
+  content: '';
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 22px;
+  height: 1.5px;
+  background: #e5383b;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+
+.header-nav li a:hover {
+  color: #f2f1ee;
+}
+
+.header-nav li a:hover::after,
+.header-nav li a.active::after {
+  transform: scaleX(1);
+}
+
+.header-nav li a.active {
+  color: #f2f1ee;
+}
+
+.btn-outline:hover {
+  color: #f2f1ee;
+  background-color: #8d8d9280;
+}
+.btn-outline {
+  background: transparent;
+  border: #8d8d92 1px solid;
+  color: #8d8d92;
+  padding: 9px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: color 0.2s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #e5383b40;
+  border: #e5383baa 1px solid;
+  color: #ffffff;
+  padding: 9px 18px;
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    transform 0.15s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  background: #b52c2f;
+}
+
+.btn-primary:active {
+  transform: scale(0.96);
+}
+
+.hamburger {
+  display: none;
+  z-index: 10;
+}
+
+.nav-actions-mobile {
+  display: none;
+}
+
+.btn-admin {
+  background: rgba(242, 169, 0, 0.14);
+  border: 1px solid rgba(242, 169, 0, 0.5);
+  color: #f2a900;
+  padding: 9px 18px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s,
+    transform 0.15s;
+  white-space: nowrap;
+}
+
+.btn-admin:hover {
+  background: rgba(242, 169, 0, 0.28);
+  border-color: rgba(242, 169, 0, 0.8);
+  color: #fff4d9;
+}
+
+.btn-admin:active {
+  transform: scale(0.96);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  .hamburger {
+    display: flex;
+  }
+
+  .app-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+  }
+
+  .desktop-only {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 410px) {
+  .app-header .logo-text,
+  .logo-text span {
+    display: none;
+  }
+  .logo-img{
+    height: 70px;
+
+  }
+}
