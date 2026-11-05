@@ -8,13 +8,17 @@ Sistema web full-stack para la gestión de un taller de motos: tienda de repuest
 ![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Mongoose-47A248?logo=mongodb&logoColor=white)
 
-<!-- Cuando tengas capturas, guárdalas en docs/screenshots/ y descomenta esto:
+![Página principal de Anduba Motos](docs/screenshots/home.png)
+
 ## 📸 Capturas
 
-| Inicio | Panel administrativo |
+| Panel de administración | Agendamiento de citas |
 |---|---|
-| ![Inicio](docs/screenshots/home.png) | ![Dashboard](docs/screenshots/dashboard.png) |
--->
+| ![Panel de administración](docs/screenshots/dashboard.png) | ![Agendar cita](docs/screenshots/agendar-cita.png) |
+
+**Reporte financiero:** ventas, costos y ganancias calculados con aggregation pipelines de MongoDB.
+
+![Reporte de ventas y ganancias](docs/screenshots/reporte-financiero.png)
 
 ## ✨ Funcionalidades
 
