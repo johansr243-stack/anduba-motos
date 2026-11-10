@@ -3,6 +3,6 @@
 // actualiza estas dos URLs.
 export const environment = {
   production: true,
-  apiUrl: 'https://anduba-motos-api.onrender.com/api',
-  filesUrl: 'https://anduba-motos-api.onrender.com'
+  apiUrl: 'https://anduba-motos.onrender.com/api',
+  filesUrl: 'https://anduba-motos.onrender.com'
 };
